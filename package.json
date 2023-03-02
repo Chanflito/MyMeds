@@ -15,8 +15,9 @@
   "bugs": {
     "url": "https://github.com/Chanflito/MyMeds/issues"
   },
-  "type":"module",
-  "dependencies": {},
-  "devDependencies": {},
-  "homepage": "https://github.com/Chanflito/MyMeds#readme"
+  "type": "module",
+  "homepage": "https://github.com/Chanflito/MyMeds#readme",
+  "devDependencies": {
+    "express": "^4.18.2"
+  }
 }
