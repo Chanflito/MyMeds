@@ -1,0 +1,80 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+.patients{
+    width: 50%;
+    min-height: 100vh;
+    background-image: url(/src/main/resources/Patient-Role.jpg);
+    background-position: center;
+    background-size: cover;
+    padding: 10px 10%;
+    overflow: hidden;
+}
+
+h1{
+    position: absolute;
+    text-align: right;
+    top: 8%;
+    left: 58%;
+    font-size: 50px;
+    color: aquamarine;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+  
+  
+  form {
+    position: absolute;
+    left: 63%;
+    top: 20%;
+    border: 5px solid aquamarine;
+    padding: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 20px;
+  }
+  
+  .input-group {
+    display: flex;
+    margin-bottom: 40px;
+  }
+  
+  label {
+    width: 100px;
+  }
+  
+  input,
+  select,
+  textarea {
+    flex: 1;
+    padding: 3px 5px;
+  }
+  
+  .submit-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  button {
+    width: 100px;
+    margin: 0 auto;
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+.imag1{
+    width: 300px;
+    position: absolute;
+    left: 65%;
+    bottom: 5%;
+}
+  
