@@ -5,7 +5,7 @@
      font-family: sans-serif;
 }
 body{
-  background-image: url(/src/main/resources/medsBackground.jpg);
+  background-image: url("/resources/medsBackground.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -24,17 +24,55 @@ h1{
   background-color: #4CAF50;
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 10px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
+  margin: 25px 2px;
   cursor: pointer;
   border-radius: 20px;
 }
-
+.submit:active {
+  position:relative;
+  top:1px;
+}
 .foo{
   padding-left:80% ;
   padding-top: 200px;
 }
+
+.divider{
+  padding-top: 5px;
+}
+
+.user-password{
+  margin-top: 20px;
+}
+
+.user-log{
+  margin-top: 20px;
+}
+
+.buttonClass{
+  margin-top: 15px;
+  box-shadow: 0px 1px 0px 0px #fff6af;
+	background:linear-gradient(to bottom, #ffec64 5%, #ffab23 100%);
+	background-color:#ffec64;
+	border-radius:6px;
+	border:1px solid #ffaa22;
+	display:inline-block;
+	cursor:pointer;
+	color:#333333;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffee66;
+}
+
+.buttonClass:active {
+    position:relative;
+    top:1px;
+  }
+  
