@@ -5,7 +5,7 @@
      font-family: sans-serif;
 }
 body{
-  background-image: url("/resources/medsBackground.jpg");
+  background-image: url("/src/resources/medsBackground.jpg");
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -48,10 +48,14 @@ h1{
 
 .user-password{
   margin-top: 20px;
+  padding: 0.6%;
+  padding-left: 1.5%;
 }
 
 .user-log{
   margin-top: 20px;
+  padding: 0.6%;
+  padding-left: 1.5%;
 }
 
 .buttonClass{

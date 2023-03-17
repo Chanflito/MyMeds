@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/main/react/css/register.css"/>
+     <title>Patient Register</title>
+</head>
+<body>
+     <div class="register">
+          <h1>
+              Patient Register
+          </h1>
+          <form>
+            <div class="input-group">
+              <label for="username">Username</label>
+              <input
+                id="username"
+                name="username"
+                placeholder="Enter Username"
+                required="required"
+              />
+            </div>
+              <div class="input-group">
+                <label for="fname">First Name</label>
+                <input
+                  id="fname"
+                  name="fname"
+                  placeholder="Enter first name"
+                  required="required"
+                />
+              </div>
+              <div class="input-group">
+                <label for="lname">Last Name</label>
+                <input
+                  id="lname"
+                  name="lname"
+                  placeholder="Enter last name"
+                  required="required"
+                />
+              </div>
+
+              <div class="input-group">
+               <label for="dni">DNI</label>
+               <input
+                 id="dni"
+                 name="dni"
+                 placeholder="Enter DNI"
+                 required="required"
+               />
+             </div>
+              <div class="input-group">
+                <label for="email">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div class="input-group">
+                <label for="password">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                />
+              </div>
+              <div class="submit-group">
+                <button type="submit" id="reggisterBtn">Register</button>
+              </div>
+            </form>
+            <img src='/src/resources/MyMedsLogo.png' class="imag1">           
+      </div>
+      <script src="/src/main/react/js/register.js"></script>
+</body>
+</html>
