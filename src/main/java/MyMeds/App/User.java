@@ -1,23 +1,27 @@
 package MyMeds.App;
 
+import jakarta.persistence.*;
+@MappedSuperclass
 class User{
-
-   private Integer primarykey;
-   private String username;
+    @Id
+   private Integer primaryKey;
+    @Column
+   private String userName;
+    @Column
    private String password;
-
    public User(Integer primarykey, String username, String password){
-    this.primarykey = primarykey;
-    this.username = username;
+    this.primaryKey = primarykey;
+    this.userName = username;
     this.password = password;
    }
+   public User(){}
 
    public Integer getPrimarykey(){
-    return this.primarykey;
+    return this.primaryKey;
    }
 
    public String getUsername(){
-    return this.username;
+    return this.userName;
    }
 
    public String getPassword(){

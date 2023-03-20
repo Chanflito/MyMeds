@@ -1,13 +1,21 @@
 package MyMeds.App;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+
 import java.util.List;
 
+@Entity
 public class Pharmacy extends User{
-
-    public Pharmacy(Integer regist_number, String username, String password){
-        super(regist_number, username, password);
+    @Column
+    private String mail;
+    public Pharmacy(){}
+    public Pharmacy(Integer registNumber, String userName, String password, String mail){
+        super(registNumber, userName, password);
+        this.mail=mail;
     }
 
-//GETTERS
+
+    //GETTERS
     public Integer getRegistNumber(){
         return super.getPrimarykey();
     }
@@ -19,7 +27,7 @@ public class Pharmacy extends User{
     }
 
 //METHODS
-    public boolean VerifyDoctor(Integer doc_regist_number){
+    public boolean VerifyDoctor(Integer docRegistNumber){
         //Looks for the doc registration number in a DB, If exists then returns true
         return false;
     }
@@ -37,7 +45,7 @@ public class Pharmacy extends User{
         }    
     }
 
-    public void StampRecipe(Integer recipe_key){
+    public void StampRecipe(Integer recipeKey){
         //Modifies the Recipe DB given it´s primary key
     }
 }

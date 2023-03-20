@@ -1,11 +1,18 @@
 package MyMeds.App;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+
+@Entity
+public
 class Patient extends User{
-
+    @Column
     private String mail;
-    private Integer health_insuarence;//Awaits until being set
+    @Column
+    private Integer healthInsuarence; //Awaits until being set
 
-    public Patient(Integer dni, String username, String password, String mail){
+    public Patient(){}
+    public Patient(Integer dni,String mail, String username, String password){
         super(dni, username, password);
         this.mail = mail;
     }
@@ -27,17 +34,17 @@ class Patient extends User{
 //METHODS
 
                                     //Patient gives the simpliest information to app
-    public Request RequestRecipie(String doc_username, String ph_username, String durg_name){
+    public Request RequestRecipie(String docUsername, String phUsername, String drugName){
         //Mades a request for a drug that will be bought in a specific pharmacy
-        return new Request(doc_username, ph_username, durg_name);
+        return new Request(docUsername, phUsername, drugName);
     }
 
     public void Pay(){
         //Pays for its drugs
     }
 
-    public void AddHealthInsuarence(Integer health_insuarence){
+    public void AddHealthInsuarence(Integer healthInsuarence){
         //Kind of SETTER
-        this.health_insuarence = health_insuarence;
+        this.healthInsuarence = healthInsuarence;
     }
 }

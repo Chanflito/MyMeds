@@ -8,7 +8,7 @@
 .register{
     width: 50%;
     min-height: 100vh;
-    background-image: url("/src/resources/Patient-Role.jpg");
+    background-image: url("/src/main/resources/Patient-Role.jpg");
     background-position: center;
     background-size: cover;
     padding: 10px 10%;

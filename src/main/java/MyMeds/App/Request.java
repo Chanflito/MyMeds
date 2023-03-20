@@ -2,15 +2,15 @@ package MyMeds.App;
 
 public class Request {
     
-    private String doc_username;
-    private String ph_username;
-    private String drug_name;
+    private String docUsername;
+    private String phUsername;
+    private String drugName;
     private Integer key = hashCode();
 
-    public Request(String doc_username, String ph_username, String drug_name){
-        this.doc_username = doc_username;
-        this.ph_username = ph_username;
-        this.drug_name = drug_name;
+    public Request(String docUsername, String phUsername, String drugName){
+        this.docUsername = docUsername;
+        this.phUsername = phUsername;
+        this.drugName = drugName;
     }
 
 //GETTERS
@@ -18,13 +18,13 @@ public class Request {
         return key;
     }
     public String getDocUsername(){
-        return doc_username;
+        return docUsername;
     }
     public String getPhUsername(){
-        return ph_username;
+        return phUsername;
     }
     public String getDrugName(){
-        return drug_name;
+        return drugName;
     }
 
 }
