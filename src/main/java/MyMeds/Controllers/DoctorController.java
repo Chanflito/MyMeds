@@ -12,24 +12,25 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/doctor")
 public class DoctorController {
-    @Autowired
+    @Autowired//Instancia Spring el servicio.
     UserService userService;
-    @GetMapping()
+
+    @GetMapping()//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
     public List<Doctor>getDoctors(){
         return userService.getDoctors();
     }
 
-    @PostMapping
+    @PostMapping//Recibe una Request con un username, password etc y crea un nuevo doctor en la base de datos.
     public Doctor saveDoctor(@RequestBody Doctor doctor){
         return this.userService.saveDoctor(doctor);
     }
 
-    @GetMapping(path="/{id}")
+    @GetMapping(path="/{id}")//Busca los doctores en la base de datos mediante un ID y retorna el doctor en formato JSON con sus atributos.
     public Optional<Doctor> getDoctorById(@PathVariable("id") Integer id){
         return this.userService.getDoctorById(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")//Busca en la base de datos el doctor y lo borra, para hacer uso de la misma hay que hacer un DELETE en la url /doctor/id
     public String deleteDoctorById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deleteDoctorById(id);
         if (founded){

@@ -11,7 +11,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/patient")
 public class PatientController {
-
     @Autowired
     UserService userService;
     @GetMapping()

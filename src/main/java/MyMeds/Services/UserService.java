@@ -17,13 +17,12 @@ import java.util.Optional;
 public class UserService {
     @Autowired //No tengo que instnaciarlo spring ya lo sabe.
     DoctorRepository doctorRepository;
-
     @Autowired
     PatientRepository patientRepository;
 
     @Autowired
     PharmacyRepository pharmacyRepository;
-
+    //Utiliza el repositorio para buscar los doctores en la base de datos.
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
     }
@@ -35,7 +34,7 @@ public class UserService {
     public List<Pharmacy> getPharmacys(){
         return  pharmacyRepository.findAll();
     }
-
+    //Guarda el doctor.
     public Doctor saveDoctor(Doctor doctor){
         return doctorRepository.save(doctor);
     }
@@ -47,7 +46,7 @@ public class UserService {
     public Pharmacy savePharmacy(Pharmacy pharmacy){
         return pharmacyRepository.save(pharmacy);
     }
-
+    //Busca un doctor con un ID, si lo encuentra retorna el objeto en formato JSON, sino lo encuentra retorna una excepcion.
     public Optional<Doctor> getDoctorById(Integer id){
         return Optional.ofNullable(doctorRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
@@ -59,7 +58,7 @@ public class UserService {
     public Optional<Pharmacy> getPharmacyById(Integer id){
         return Optional.ofNullable(pharmacyRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
     }
-
+    //Si encuentra el doctor lo borra y retorna true, caso contrario retorna false.
     public boolean deleteDoctorById(Integer id){
         if (!doctorRepository.existsById(id)){
             return false;
