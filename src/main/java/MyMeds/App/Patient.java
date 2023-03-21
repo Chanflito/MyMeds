@@ -27,6 +27,7 @@ class Patient extends User{
     public String getUsername(){
         return super.getUsername();
     }
+
     public String getMail(){
         return this.mail;
     }

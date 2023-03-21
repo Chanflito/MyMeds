@@ -1,34 +1,40 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Pharmacy;
-import MyMeds.Exceptions.UserNotFoundException;
-import MyMeds.Interfaces.PharmacyRepository;
+import MyMeds.Services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController
-public class PharmacyController {
-    private final PharmacyRepository pharmacyRepository;
+import java.util.Optional;
 
-    public PharmacyController(PharmacyRepository pharmacyRepository){
-        this.pharmacyRepository=pharmacyRepository;
+@RestController
+@RequestMapping("/pharmacy")
+public class PharmacyController {
+    @Autowired
+    UserService userService;
+    @GetMapping()
+    public List<Pharmacy>getPharmacy(){
+        return userService.getPharmacys();
     }
-    @GetMapping("/pharmacy")
-    List<Pharmacy> all(){
-        return  pharmacyRepository.findAll();
+
+    @PostMapping
+    public Pharmacy savePharmacy(@RequestBody Pharmacy pharmacy){
+        return this.userService.savePharmacy(pharmacy);
     }
-    @PostMapping("/pharmacy")
-    Pharmacy pharmacy(@RequestBody Pharmacy pharmacy){
-        return pharmacyRepository.save(pharmacy);
+
+    @GetMapping(path="/{id}")
+    public Optional<Pharmacy> getPharmacyById(@PathVariable("id") Integer id){
+        return this.userService.getPharmacyById(id);
     }
-    @GetMapping("/pharmacy/{primaryKey}")
-    Pharmacy getPharmacyById(@PathVariable Integer primaryKey){
-        return pharmacyRepository.findById(primaryKey).orElseThrow(
-                ()->new UserNotFoundException(primaryKey)
-        );
-    }
-    @DeleteMapping("/pharmacy/{primaryKey}")
-    void deletePharmacy(@PathVariable Integer primaryKey) {
-        pharmacyRepository.deleteById(primaryKey);
+
+    @DeleteMapping("/{id}")
+    public String deletePharmacyById(@PathVariable("id") Integer id){
+        boolean founded=this.userService.deletePharmacyById(id);
+        if (founded){
+            return "User deleted with ID "+ id;
+        }else{
+            return "Can't delete user with ID "+ id;
+        }
     }
 }

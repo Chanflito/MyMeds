@@ -1,39 +1,41 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Patient;
-import MyMeds.Exceptions.UserNotFoundException;
-import MyMeds.Interfaces.PatientRepository;
+import MyMeds.Services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/patient")
 public class PatientController {
-    private final PatientRepository patientRepository;
 
-    public PatientController(PatientRepository patientRepository){
-        this.patientRepository=patientRepository;
+    @Autowired
+    UserService userService;
+    @GetMapping()
+    public List<Patient> getPatients(){
+        return userService.getPatients();
     }
 
-    @GetMapping("/patient")
-    List<Patient> all(){
-        return  patientRepository.findAll();
+    @PostMapping
+    public Patient savePatient(@RequestBody Patient patient){
+        return this.userService.savePatient(patient);
     }
 
-    @PostMapping("/patient")
-    Patient newPatient(@RequestBody Patient patient){
-        return patientRepository.save(patient);
+    @GetMapping(path="/{id}")
+    public Optional<Patient> getPatientById(@PathVariable("id") Integer id){
+        return this.userService.getPatientById(id);
     }
 
-    @GetMapping("/patient/{primaryKey}")
-    Patient getPatientById(@PathVariable Integer primaryKey){
-        return patientRepository.findById(primaryKey).orElseThrow(
-                ()->new UserNotFoundException(primaryKey)
-        );
-    }
-
-    @DeleteMapping("/patient/{primaryKey}")
-    void deletePatient(@PathVariable Integer primaryKey) {
-        patientRepository.deleteById(primaryKey);
+    @DeleteMapping("/{id}")
+    public String deletePatientById(@PathVariable("id") Integer id){
+        boolean founded=this.userService.deletePatientById(id);
+        if (founded){
+            return "User deleted with ID"+ id;
+        }else{
+            return "Can't delete user with ID"+ id;
+        }
     }
 }

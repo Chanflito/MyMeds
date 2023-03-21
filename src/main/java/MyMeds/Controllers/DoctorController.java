@@ -1,34 +1,41 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Doctor;
-import MyMeds.Exceptions.UserNotFoundException;
-import MyMeds.Interfaces.DoctorRepository;
+
+import MyMeds.Services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController
-public class DoctorController {
-    private final DoctorRepository doctorRepository;
+import java.util.Optional;
 
-    public DoctorController(DoctorRepository doctorRepository){
-        this.doctorRepository=doctorRepository;
+@RestController
+@RequestMapping("/doctor")
+public class DoctorController {
+    @Autowired
+    UserService userService;
+    @GetMapping()
+    public List<Doctor>getDoctors(){
+        return userService.getDoctors();
     }
-    @GetMapping("/doctor")
-    List<Doctor> all(){
-        return doctorRepository.findAll();
+
+    @PostMapping
+    public Doctor saveDoctor(@RequestBody Doctor doctor){
+        return this.userService.saveDoctor(doctor);
     }
-    @PostMapping("/doctor")
-    Doctor newDoctor(@RequestBody Doctor doctor){
-        return doctorRepository.save(doctor);
+
+    @GetMapping(path="/{id}")
+    public Optional<Doctor> getDoctorById(@PathVariable("id") Integer id){
+        return this.userService.getDoctorById(id);
     }
-    @GetMapping("/doctor/{primaryKey}")
-    Doctor getDoctorsById(@PathVariable Integer primaryKey){
-        return doctorRepository.findById(primaryKey).orElseThrow(
-                ()->new UserNotFoundException(primaryKey)
-        );
-    }
-    @DeleteMapping("/doctor/{primaryKey}")
-    void deleteDoctor(@PathVariable Integer primaryKey) {
-        doctorRepository.deleteById(primaryKey);
+
+    @DeleteMapping("/{id}")
+    public String deleteDoctorById(@PathVariable("id") Integer id){
+        boolean founded=this.userService.deleteDoctorById(id);
+        if (founded){
+            return "User deleted with ID "+ id;
+        }else{
+            return "Can't delete user with ID "+ id;
+        }
     }
 }

@@ -9,8 +9,8 @@ public class Pharmacy extends User{
     @Column
     private String mail;
     public Pharmacy(){}
-    public Pharmacy(Integer registNumber, String userName, String password, String mail){
-        super(registNumber, userName, password);
+    public Pharmacy(Integer primaryKey, String userName, String password, String mail){
+        super(primaryKey, userName, password);
         this.mail=mail;
     }
 
@@ -24,6 +24,9 @@ public class Pharmacy extends User{
     }
     public String getPassword(){
         return super.getPassword();
+    }
+    public String getMail(){
+        return this.mail;
     }
 
 //METHODS

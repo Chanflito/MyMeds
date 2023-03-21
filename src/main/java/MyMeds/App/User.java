@@ -4,27 +4,34 @@ import jakarta.persistence.*;
 @MappedSuperclass
 class User{
     @Id
-   private Integer primaryKey;
+   private Integer id;
     @Column
-   private String userName;
+   private String username;
     @Column
    private String password;
-   public User(Integer primarykey, String username, String password){
-    this.primaryKey = primarykey;
-    this.userName = username;
+   public User(Integer id, String username, String password){
+    this.id = id;
+    this.username = username;
     this.password = password;
    }
-   public User(){}
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public User(){}
 
    public Integer getPrimarykey(){
-    return this.primaryKey;
+    return this.id;
    }
 
    public String getUsername(){
-    return this.userName;
+    return this.username;
    }
 
    public String getPassword(){
     return this.password;
    }
+
+
 }
