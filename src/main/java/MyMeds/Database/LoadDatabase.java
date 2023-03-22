@@ -25,7 +25,7 @@ public class LoadDatabase {
             log.info("Preloading"+ doctorRepository.save(
                     new Doctor(333445,"Roberto Caffaro",
                             "robertito123",
-                            "robert")));
+                            "robert","myMail@gmail.com")));
             log.info("Preloading"+ patientRepository.save(
                     new Patient(41555631,
                             "marcos@gmail.com","Marcos Lambertini",

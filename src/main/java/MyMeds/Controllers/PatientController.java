@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/patient")
+@CrossOrigin
 public class PatientController {
     @Autowired
     UserService userService;
@@ -32,9 +33,9 @@ public class PatientController {
     public String deletePatientById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deletePatientById(id);
         if (founded){
-            return "User deleted with ID"+ id;
+            return "User deleted by ID"+ id;
         }else{
-            return "Can't delete user with ID"+ id;
+            return "Can't delete user by ID"+ id;
         }
     }
 }

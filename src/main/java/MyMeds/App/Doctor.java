@@ -7,9 +7,12 @@ public class Doctor extends User{
     @Column
     private String signature;
     public Doctor(){}
-    public Doctor(Integer registerNumber, String userName, String password, String signature){
+    @Column
+    private String mail;
+    public Doctor(Integer registerNumber, String userName, String password, String signature,String mail){
         super(registerNumber, userName, password);
         this.signature = signature;
+        this.mail=mail;
     }
 
 //GETTERS AND SETTERS
@@ -27,7 +30,18 @@ public class Doctor extends User{
         return signature;
     }
 
-//METHODS
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+    //METHODS
 
     private Recipe MakeRecipe(String drugName, Integer phRegistNumber){
         //Creates a recipe
