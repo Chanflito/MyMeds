@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PharmacyRepository extends JpaRepository<Pharmacy,Integer> {
+    Pharmacy findByMail(String mail);
+    Pharmacy findByPassword(String password);
 }

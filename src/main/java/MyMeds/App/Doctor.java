@@ -4,19 +4,21 @@ import jakarta.persistence.*;
 
 @Entity
 public class Doctor extends User{
-    @Column
+    @Column(unique = true)
     private String signature;
     public Doctor(){}
-    @Column
+    @Column(unique = true)
     private String mail;
-    public Doctor(Integer registerNumber, String userName, String password, String signature,String mail){
+    @Transient
+    private final UserType userType=UserType.DOCTOR;
+    public Doctor(Integer registerNumber, String userName, String password,String mail){
         super(registerNumber, userName, password);
-        this.signature = signature;
         this.mail=mail;
     }
 
+
 //GETTERS AND SETTERS
-    public Integer getRegistNumber(){
+    public Integer getRegisterNumber(){
         return super.getPrimarykey();
     }
     public String getUsername(){
@@ -28,6 +30,10 @@ public class Doctor extends User{
 
     public String getSignature(){
         return signature;
+    }
+
+    public UserType getUserType() {
+        return userType;
     }
 
     public void setSignature(String signature) {

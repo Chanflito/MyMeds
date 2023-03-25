@@ -1,6 +1,7 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Patient;
+import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,10 @@ public class PatientController {
 
     @PostMapping
     public Patient savePatient(@RequestBody Patient patient){
-        return this.userService.savePatient(patient);
+        if (this.userService.registerPatient(patient)==null){
+            throw new UserRegisteredException();
+        }
+        return patient;
     }
 
     @GetMapping(path="/{id}")
@@ -37,5 +41,15 @@ public class PatientController {
         }else{
             return "Can't delete user by ID"+ id;
         }
+    }
+    //Podemos cambiarle la contraseña al paciente.
+    @PutMapping("/{id}")
+    public Optional<Patient> changePatientPassword(@PathVariable("id") Integer id, @RequestBody Patient patient){
+        return this.userService.changePatientPasswordByID(id,patient);
+    }
+    //Añadimos una obra social al paciente.
+    @PutMapping("/{id}/addInsurance")
+    public Optional<Patient> addHealthInsurance(@PathVariable("id") Integer id,@RequestBody Integer healthInsurance){
+        return this.userService.addHealthInsuranceById(healthInsurance,id);
     }
 }

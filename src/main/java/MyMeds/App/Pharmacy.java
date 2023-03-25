@@ -1,13 +1,16 @@
 package MyMeds.App;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 
 import java.util.List;
 
 @Entity
 public class Pharmacy extends User{
-    @Column
+    @Column(unique = true)
     private String mail;
+    @Transient
+    private final UserType userType=UserType.PHARMACY;
     public Pharmacy(){}
     public Pharmacy(Integer primaryKey, String userName, String password, String mail){
         super(primaryKey, userName, password);
@@ -25,6 +28,11 @@ public class Pharmacy extends User{
     public String getPassword(){
         return super.getPassword();
     }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
     public String getMail(){
         return this.mail;
     }

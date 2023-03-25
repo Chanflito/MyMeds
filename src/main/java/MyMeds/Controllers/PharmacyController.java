@@ -1,6 +1,7 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Pharmacy;
+import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,10 @@ public class PharmacyController {
 
     @PostMapping
     public Pharmacy savePharmacy(@RequestBody Pharmacy pharmacy){
-        return this.userService.savePharmacy(pharmacy);
+        if (this.userService.registerPharmacy(pharmacy)==null){
+            throw new UserRegisteredException();
+        }
+        return pharmacy;
     }
 
     @GetMapping(path="/{id}")

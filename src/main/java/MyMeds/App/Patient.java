@@ -2,15 +2,17 @@ package MyMeds.App;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 
 @Entity
 public
 class Patient extends User{
-    @Column
+    @Column(unique = true)
     private String mail;
     @Column
     private Integer healthInsuarence; //Awaits until being set
-
+    @Transient
+    private final UserType userType=UserType.PATIENT;
     public Patient(){}
     public Patient(Integer dni,String mail, String username, String password){
         super(dni, username, password);
@@ -27,14 +29,30 @@ class Patient extends User{
     public String getUsername(){
         return super.getUsername();
     }
-
     public String getMail(){
         return this.mail;
     }
 
-//METHODS
+    public Integer getHealthInsuarence() {
+        return healthInsuarence;
+    }
 
-                                    //Patient gives the simpliest information to app
+    public UserType getUserType() {
+        return userType;
+    }
+    //Setters
+
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public void setHealthInsuarence(Integer healthInsuarence) {
+        this.healthInsuarence = healthInsuarence;
+    }
+
+    //METHODS
+    //Patient gives the simpliest information to app
     public Request RequestRecipie(String docUsername, String phUsername, String drugName){
         //Mades a request for a drug that will be bought in a specific pharmacy
         return new Request(docUsername, phUsername, drugName);

@@ -2,6 +2,7 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Doctor;
 
+import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +24,11 @@ public class DoctorController {
 
     @PostMapping//Recibe una Request con un username, password etc y crea un nuevo doctor en la base de datos.
     public Doctor saveDoctor(@RequestBody Doctor doctor) {
-        return this.userService.saveDoctor(doctor);
+        if (this.userService.registerDoctor(doctor)==null){
+            throw new UserRegisteredException();
+        }
+        return doctor;
     }
-
     @GetMapping(path = "/{id}")
 //Busca los doctores en la base de datos mediante un ID y retorna el doctor en formato JSON con sus atributos.
     public Optional<Doctor> getDoctorById(@PathVariable("id") Integer id) {
