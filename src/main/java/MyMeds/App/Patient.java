@@ -1,14 +1,19 @@
 package MyMeds.App;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public
 class Patient extends User{
     @Column(unique = true)
     private String mail;
+    @ManyToMany
+    @JoinTable(name="doctor_patient", joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    )
+    private List<Doctor> doctors;
     @Column
     private Integer healthInsuarence; //Awaits until being set
     @Transient
@@ -60,10 +65,5 @@ class Patient extends User{
 
     public void Pay(){
         //Pays for its drugs
-    }
-
-    public void AddHealthInsuarence(Integer healthInsuarence){
-        //Kind of SETTER
-        this.healthInsuarence = healthInsuarence;
     }
 }

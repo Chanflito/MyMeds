@@ -1,7 +1,7 @@
 package MyMeds.Database;
-import MyMeds.Interfaces.DoctorRepository;
-import MyMeds.Interfaces.PatientRepository;
-import MyMeds.Interfaces.PharmacyRepository;
+import MyMeds.Repositorys.DoctorRepository;
+import MyMeds.Repositorys.PatientRepository;
+import MyMeds.Repositorys.PharmacyRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

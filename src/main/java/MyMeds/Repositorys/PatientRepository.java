@@ -1,4 +1,4 @@
-package MyMeds.Interfaces;
+package MyMeds.Repositorys;
 
 import MyMeds.App.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;

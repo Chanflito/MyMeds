@@ -2,11 +2,17 @@ package MyMeds.App;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Doctor extends User{
     @Column(unique = true)
     private String signature;
     public Doctor(){}
+
+    @ManyToMany(mappedBy = "doctors")
+    private List<Patient> patients;
     @Column(unique = true)
     private String mail;
     @Transient
@@ -14,6 +20,7 @@ public class Doctor extends User{
     public Doctor(Integer registerNumber, String userName, String password,String mail){
         super(registerNumber, userName, password);
         this.mail=mail;
+        patients = new ArrayList<>();
     }
 
 

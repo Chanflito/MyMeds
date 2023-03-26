@@ -4,9 +4,9 @@ import MyMeds.App.Doctor;
 import MyMeds.App.Patient;
 import MyMeds.App.Pharmacy;
 import MyMeds.Exceptions.UserNotFoundException;
-import MyMeds.Interfaces.DoctorRepository;
-import MyMeds.Interfaces.PatientRepository;
-import MyMeds.Interfaces.PharmacyRepository;
+import MyMeds.Repositorys.DoctorRepository;
+import MyMeds.Repositorys.PatientRepository;
+import MyMeds.Repositorys.PharmacyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -103,7 +103,7 @@ public class UserService {
     }
     public Optional<Patient> addHealthInsuranceById(Integer healthinsurance,Integer id){
         return Optional.of(patientRepository.findById(id).map(p->{
-            p.AddHealthInsuarence(healthinsurance);
+            p.setHealthInsuarence(healthinsurance);
             return patientRepository.save(p);
         })).orElseThrow(()->new UserNotFoundException(id));
     }
