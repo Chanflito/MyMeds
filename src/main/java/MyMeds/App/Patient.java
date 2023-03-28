@@ -14,12 +14,19 @@ class Patient extends User{
         inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
     )
     private List<Doctor> doctors;
+    @Column(unique = true)
+    private final Integer token=hashCode();
     @Column
     private Integer healthInsuarence; //Awaits until being set
     @Transient
     private final UserType userType=UserType.PATIENT;
     public Patient(){}
-    public Patient(Integer dni,String mail, String username, String password){
+
+    public Integer getToken() {
+        return token;
+    }
+
+    public Patient(Integer dni, String mail, String username, String password){
         super(dni, username, password);
         this.mail = mail;
     }

@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/pharmacy")
+@CrossOrigin
 public class PharmacyController {
     @Autowired
     UserService userService;

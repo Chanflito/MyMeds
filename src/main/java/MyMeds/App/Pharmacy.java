@@ -11,7 +11,14 @@ public class Pharmacy extends User{
     private String mail;
     @Transient
     private final UserType userType=UserType.PHARMACY;
+    @Column(unique = true)
+    private final Integer token=hashCode();
     public Pharmacy(){}
+
+    public Integer getToken() {
+        return token;
+    }
+
     public Pharmacy(Integer primaryKey, String userName, String password, String mail){
         super(primaryKey, userName, password);
         this.mail=mail;

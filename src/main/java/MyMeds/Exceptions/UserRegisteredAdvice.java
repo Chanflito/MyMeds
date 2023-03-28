@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class UserRegisteredAdvice {
         @ResponseBody
         @ExceptionHandler(UserRegisteredException.class)
         @ResponseStatus(HttpStatus.NOT_FOUND)
-        String userRegisteredHandler(UserRegisteredException ex){
-            return ex.getMessage();
+        public Map<String,String> exceptionHandler(UserRegisteredException userRegisteredException){
+                Map<String,String> errorMap=new HashMap<>();
+                errorMap.put("errorMessage",userRegisteredException.getMessage());
+                return errorMap;
         }
 
 }

@@ -1,4 +1,7 @@
 package MyMeds.Database;
+import MyMeds.App.Doctor;
+import MyMeds.App.Patient;
+import MyMeds.App.Pharmacy;
 import MyMeds.Repositorys.DoctorRepository;
 import MyMeds.Repositorys.PatientRepository;
 import MyMeds.Repositorys.PharmacyRepository;

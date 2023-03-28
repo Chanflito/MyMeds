@@ -10,14 +10,20 @@ public class Doctor extends User{
     @Column(unique = true)
     private String signature;
     public Doctor(){}
-
+    @Column(unique = true)
+    private final Integer token=hashCode();
     @ManyToMany(mappedBy = "doctors")
     private List<Patient> patients;
     @Column(unique = true)
     private String mail;
     @Transient
     private final UserType userType=UserType.DOCTOR;
-    public Doctor(Integer registerNumber, String userName, String password,String mail){
+
+    public Integer getToken() {
+        return token;
+    }
+
+    public Doctor(Integer registerNumber, String userName, String password, String mail){
         super(registerNumber, userName, password);
         this.mail=mail;
         patients = new ArrayList<>();
