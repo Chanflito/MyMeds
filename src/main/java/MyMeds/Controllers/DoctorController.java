@@ -46,4 +46,9 @@ public class DoctorController {
         }
     }
 
+    @PutMapping("/addpatient/{id}")
+    public Optional<Doctor> uploadPatientById(@PathVariable("id")Integer doc_id,@RequestBody Integer p_id){
+        return this.userService.uploadPatientById(p_id, doc_id);
+    }
+
 }

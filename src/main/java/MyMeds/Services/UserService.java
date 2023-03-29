@@ -145,4 +145,22 @@ public class UserService {
         return null;
     }
     //--------------------------------------------------------------------------------------------------
+    //---------------------------DOCTOREEE--------------------------------------------------------------
+
+    public Optional<Doctor> uploadPatientById(Integer p_id, Integer doc_id){
+        return Optional.of(doctorRepository.findById(doc_id).map(doc->{
+            Optional<Patient> search = patientRepository.findById(p_id);
+            Patient p = search.get();
+            if(p!=null){
+                doc.addPatient(Optional.of(p));
+                p.addDoctor(doc);
+                Patient p_new = patientRepository.save(p);
+                return doctorRepository.save(doc);
+            }
+            else{
+                throw new UserNotFoundException();
+            }
+        })).orElseThrow(()->new UserNotFoundException(doc_id));
+    }
+
 }

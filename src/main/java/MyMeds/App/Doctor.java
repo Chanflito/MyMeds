@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Doctor extends User{
@@ -13,8 +14,9 @@ public class Doctor extends User{
     @Column(unique = true)
     private final Integer token=hashCode();
     @ManyToMany(mappedBy = "doctors")
+    @Transient
     private List<Patient> patients;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String mail;
     @Transient
     private final UserType userType=UserType.DOCTOR;
@@ -30,7 +32,7 @@ public class Doctor extends User{
     }
 
 
-//GETTERS AND SETTERS
+    //GETTERS AND SETTERS
     public Integer getRegisterNumber(){
         return super.getPrimarykey();
     }
@@ -40,26 +42,26 @@ public class Doctor extends User{
     public String getPassword(){
         return super.getPassword();
     }
-
     public String getSignature(){
         return signature;
     }
-
     public UserType getUserType() {
         return userType;
     }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
     public String getMail() {
         return mail;
     }
+    public List<Patient> getPatients(){return patients;}
 
     public void setMail(String mail) {
         this.mail = mail;
     }
+    public void setSignature(String signature) {this.signature = signature;}
+    public void addPatient(Optional<Patient> p){if(!patients.contains(p.get())){patients.add(p.get());}}
+    public void removePatient(Optional<Patient> p){
+        if(patients.contains(p.get())){patients.remove(p.get());}
+    }
+
     //METHODS
 
     private Recipe MakeRecipe(String drugName, Integer phRegistNumber){
