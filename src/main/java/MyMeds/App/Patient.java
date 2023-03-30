@@ -1,10 +1,12 @@
 package MyMeds.App;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 public
@@ -15,10 +17,11 @@ class Patient extends User{
     @JoinTable(name="doctor_patient", joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
     )
-    @Transient
+    @JsonIgnore
     private List<Doctor> doctors;
     @Column(unique = true)
-    private final Integer token=hashCode();
+    private String token= UUID.randomUUID().toString();
+
     @Column
     private Integer healthInsuarence; //Awaits until being set
     @Transient
@@ -33,6 +36,11 @@ class Patient extends User{
     }
 
 //GETTERS Y SETTERS
+
+    public String getToken() {
+        return token;
+    }
+
     public Integer getDni(){
         return super.getPrimarykey();
     }
@@ -51,9 +59,10 @@ class Patient extends User{
     public UserType getUserType() {
         return userType;
     }
-    public Integer getToken() {
-        return token;
+    public void setToken(String token) {
+        this.token = token;
     }
+
     public List<Doctor> getDoctors(){return this.doctors;}
 
     public void setMail(String mail) {
@@ -63,7 +72,9 @@ class Patient extends User{
         this.healthInsuarence = healthInsuarence;
     }
     public void addDoctor(Doctor d){if(!doctors.contains(d)){doctors.add(d);}}
-    public void removeDoctor(Doctor d){if(doctors.contains(d)){doctors.remove(d);}}
+    public void removeDoctor(Doctor d){
+        doctors.remove(d);
+    }
 
     //METHODS
     //Patient gives the simpliest information to app

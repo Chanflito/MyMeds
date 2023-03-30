@@ -2,9 +2,7 @@ package MyMeds.App;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Entity
 public class Doctor extends User{
@@ -12,18 +10,13 @@ public class Doctor extends User{
     private String signature;
     public Doctor(){}
     @Column(unique = true)
-    private final Integer token=hashCode();
+    private String token= UUID.randomUUID().toString();
     @ManyToMany(mappedBy = "doctors")
-    @Transient
     private List<Patient> patients;
     @Column(unique = true, nullable = false)
     private String mail;
     @Transient
     private final UserType userType=UserType.DOCTOR;
-
-    public Integer getToken() {
-        return token;
-    }
 
     public Doctor(Integer registerNumber, String userName, String password, String mail){
         super(registerNumber, userName, password);
@@ -52,6 +45,12 @@ public class Doctor extends User{
         return mail;
     }
     public List<Patient> getPatients(){return patients;}
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public void setMail(String mail) {
         this.mail = mail;
@@ -85,4 +84,13 @@ public class Doctor extends User{
         //Adds a new patient to his DB
     }
 
-}
+    public Boolean searchPatient(Integer patientId){
+        List<Patient> patientList=getPatients();
+        for (Patient patient : patientList) {
+            if (Objects.equals(patient.getPrimarykey(), patientId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+ }

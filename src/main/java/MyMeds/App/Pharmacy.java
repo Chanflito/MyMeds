@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 public class Pharmacy extends User{
@@ -12,12 +13,9 @@ public class Pharmacy extends User{
     @Transient
     private final UserType userType=UserType.PHARMACY;
     @Column(unique = true)
-    private final Integer token=hashCode();
+    private String  token= UUID.randomUUID().toString();
     public Pharmacy(){}
 
-    public Integer getToken() {
-        return token;
-    }
 
     public Pharmacy(Integer primaryKey, String userName, String password, String mail){
         super(primaryKey, userName, password);
@@ -25,7 +23,13 @@ public class Pharmacy extends User{
     }
 
 
-    //GETTERS
+    //GETTERS AND SETTERS
+    public String getToken() {
+        return token;
+    }
+    public void setToken(String token) {
+        this.token = token;
+    }
     public Integer getRegistNumber(){
         return super.getPrimarykey();
     }

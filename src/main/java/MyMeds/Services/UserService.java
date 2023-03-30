@@ -4,6 +4,7 @@ import MyMeds.App.Doctor;
 import MyMeds.App.Patient;
 import MyMeds.App.Pharmacy;
 import MyMeds.Exceptions.UserNotFoundException;
+import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Repositorys.DoctorRepository;
 import MyMeds.Repositorys.PatientRepository;
 import MyMeds.Repositorys.PharmacyRepository;
@@ -150,16 +151,17 @@ public class UserService {
     public Optional<Doctor> uploadPatientById(Integer p_id, Integer doc_id){
         return Optional.of(doctorRepository.findById(doc_id).map(doc->{
             Optional<Patient> search = patientRepository.findById(p_id);
-            Patient p = search.get();
-            if(p!=null){
-                doc.addPatient(Optional.of(p));
-                p.addDoctor(doc);
-                Patient p_new = patientRepository.save(p);
+            boolean found=doc.searchPatient(p_id);
+            if(search.isPresent() && !found){
+                doc.addPatient(search);
+                search.get().addDoctor(doc);
+                patientRepository.save(search.get());
                 return doctorRepository.save(doc);
             }
-            else{
-                throw new UserNotFoundException();
+            else if (found){
+                throw new UserRegisteredException();
             }
+            throw new UserNotFoundException(p_id);
         })).orElseThrow(()->new UserNotFoundException(doc_id));
     }
 
