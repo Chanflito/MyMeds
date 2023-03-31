@@ -1,13 +1,12 @@
 package MyMeds.Services;
 
-import MyMeds.App.Doctor;
-import MyMeds.App.Patient;
-import MyMeds.App.Pharmacy;
+import MyMeds.App.*;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Repositorys.DoctorRepository;
 import MyMeds.Repositorys.PatientRepository;
 import MyMeds.Repositorys.PharmacyRepository;
+import MyMeds.Repositorys.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -20,9 +19,10 @@ public class UserService {
     DoctorRepository doctorRepository;
     @Autowired
     PatientRepository patientRepository;
-
     @Autowired
     PharmacyRepository pharmacyRepository;
+    @Autowired
+    RequestRepository requestRepository;
     //Utiliza el repositorio para buscar los doctores en la base de datos.
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
@@ -163,6 +163,28 @@ public class UserService {
             }
             throw new UserNotFoundException(p_id);
         })).orElseThrow(()->new UserNotFoundException(doc_id));
+    }
+
+    //--------------------------REQUESTS-FROM-PATIENTS-TO-DOCTORS--------------------------------------
+
+    public List<Request> getRequests(){
+        return requestRepository.findAll();
+    }
+
+    public Optional<Request> getRequestById(Integer id){
+        return Optional.ofNullable(requestRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
+    }
+
+    public Request registerRequest(Request req){
+        //If it finds an existing request with the same id, retuns null
+        if(requestRepository.findById(req.getPrimaryKey()).isEmpty()){
+            return requestRepository.save(req);
+        }
+        return null;
+    }
+
+    public boolean deleteRequestById(Integer id){
+        return false;
     }
 
 }
