@@ -2,6 +2,7 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Doctor;
 
+import MyMeds.App.Patient;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,4 +52,8 @@ public class DoctorController {
         return this.userService.uploadPatientById(p_id, doc_id);
     }
 
+    @GetMapping("/listpatients/{id}")
+    public List<Patient> getPatientList(@PathVariable("id") Integer id){
+        return this.userService.getAllPatients(id);
+    }
 }

@@ -21,8 +21,6 @@ public class Pharmacy extends User{
         super(primaryKey, userName, password);
         this.mail=mail;
     }
-
-
     //GETTERS AND SETTERS
     public String getToken() {
         return token;

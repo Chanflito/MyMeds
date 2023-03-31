@@ -9,6 +9,7 @@ import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
 
 
 @RestController
@@ -24,12 +25,15 @@ public class LoginController {
         Patient patient=userService.checkLoginPatient(request.getMail(), request.getPassword());
         Pharmacy pharmacy=userService.checkLoginPharmacy(request.getMail(), request.getPassword());
         if (patient!=null){
+            patient.setToken(UUID.randomUUID().toString());
             return patient;
         }
         if (doctor!=null){
+            doctor.setToken(UUID.randomUUID().toString());
             return doctor;
         }
         if (pharmacy!=null){
+            pharmacy.setToken(UUID.randomUUID().toString());
             return pharmacy;
         }
         else{

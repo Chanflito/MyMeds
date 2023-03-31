@@ -56,6 +56,6 @@ public class LoadDatabase {
 //            pharmacyRepository.save(farmacia3);
 //            pharmacyRepository.save(farmacia4);
 //            pharmacyRepository.save(farmacia5);
-        };
+       };
     }
 }

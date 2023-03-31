@@ -2,6 +2,7 @@ package MyMeds.App;
 
 import jakarta.persistence.*;
 @MappedSuperclass
+public
 class User{
     @Id
    private Integer id;
@@ -14,7 +15,6 @@ class User{
     this.username = username;
     this.password = password;
    }
-
     public void setId(Integer id) {
         this.id = id;
     }

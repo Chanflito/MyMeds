@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -186,5 +187,56 @@ public class UserService {
     public boolean deleteRequestById(Integer id){
         return false;
     }
+    //-------------------------REQUESTS-FROM-DOCTORS-TO-PATIENTS--------------------------------------
+    public List<Patient> getAllPatients(Integer doctorID){
+        return doctorRepository.findByPatients(doctorID);
+    }
+    //-------------------------Token Manage-----------------------------------------------------------
+    //Primero busca el paciente en la base de datos, si lo encuentra
+    //verifica si el token que tiene ese paciente es el mismo con el que tiene en el localStorage, si es el mismo retorna true
+    //otherwise, false.
+    public boolean checkPatientTokenById(Integer patientID, String token){
+        Optional<Patient> patientFound=patientRepository.findById(patientID);
+        return patientFound.filter(patient -> Objects.equals(patient.getToken(), token)).isPresent();
+    }
 
+
+    public boolean checkDoctorTokenById(Integer doctorID, String token){
+        Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
+        return doctorFound.filter(doctor -> Objects.equals(doctor.getToken(), token)).isPresent();
+    }
+
+    public boolean checkPharmacyTokenById (Integer pharmacyID, String token){
+        Optional<Pharmacy> pharmacyFound=pharmacyRepository.findById(pharmacyID);
+        return pharmacyFound.filter(pharmacy -> Objects.equals(pharmacy.getToken(), token)).isPresent();
+    };
+    //Cambiamos el token del usuario una vez que hace logout, debemos llamar a esta funcion.
+    public boolean changePatientToken(Integer userID){
+        Optional<Patient> patientFound=patientRepository.findById(userID);
+        if (patientFound.isPresent()){
+            patientFound.get().setToken(UUID.randomUUID().toString());
+            patientRepository.save(patientFound.get());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean changePharmacyToken(Integer userID){
+        Optional<Pharmacy> pharmacyFound=pharmacyRepository.findById(userID);
+        if (pharmacyFound.isPresent()){
+            pharmacyFound.get().setToken(UUID.randomUUID().toString());
+            pharmacyRepository.save(pharmacyFound.get());
+            return true;
+        }
+        return false;
+    }
+    public boolean changeDoctorToken(Integer userID){
+        Optional<Doctor> doctorFound=doctorRepository.findById(userID);
+        if (doctorFound.isPresent()){
+            doctorFound.get().setToken(UUID.randomUUID().toString());
+            doctorRepository.save(doctorFound.get());
+            return true;
+        }
+        return false;
+    }
 }
