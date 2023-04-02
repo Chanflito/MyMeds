@@ -185,7 +185,35 @@ public class UserService {
     }
 
     public boolean deleteRequestById(Integer id){
-        return false;
+        if (!requestRepository.existsById(id)){
+            return false;
+        }
+        requestRepository.deleteById(id);
+        return true;
+    }
+
+    public boolean addRequest(Integer patientId,Integer docId, String drugName){
+        Optional<Doctor> doc_entity = doctorRepository.findById(docId);
+        Optional<Patient> patient_entity = patientRepository.findById(patientId);
+        if(doc_entity.isEmpty() || patient_entity.isEmpty()){
+            throw new UserNotFoundException();
+        }
+        else{
+            Doctor doc = doc_entity.get();
+            Patient p = patient_entity.get();
+            if(doc.getSignature() != null){
+                return false;
+            }
+            else{
+                Request req = new Request(doc.getUsername(), p.getUsername(), drugName);
+                req.addAssignedDoctor(doc);
+                doc.addRequest(req);
+                doctorRepository.save(doc);
+                requestRepository.save(req);
+                return true;
+            }
+        }
+
     }
     //-------------------------REQUESTS-FROM-DOCTORS-TO-PATIENTS--------------------------------------
     public List<Patient> getAllPatients(Integer doctorID){

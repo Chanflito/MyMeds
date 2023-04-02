@@ -13,6 +13,8 @@ public class Doctor extends User{
     private String token= UUID.randomUUID().toString();
     @ManyToMany(mappedBy = "doctors")
     private List<Patient> patients;
+    @OneToMany(mappedBy = "doctors")
+    private List<Request> requests;
     @Column(unique = true, nullable = false)
     private String mail;
     @Transient
@@ -22,6 +24,7 @@ public class Doctor extends User{
         super(registerNumber, userName, password);
         this.mail=mail;
         patients = new ArrayList<>();
+        requests = new ArrayList<>();
     }
 
 
@@ -60,6 +63,8 @@ public class Doctor extends User{
     public void removePatient(Optional<Patient> p){
         if(patients.contains(p.get())){patients.remove(p.get());}
     }
+    public void addRequest(Request req){if (!requests.contains(req)){requests.add(req);}}
+    public void removeRequest(Request req){if(requests.contains(req)){requests.remove(req);}}
 
     //METHODS
 

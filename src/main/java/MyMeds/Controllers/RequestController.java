@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/request")
-@CrossOrigin //?? should I?
+@CrossOrigin
 public class RequestController {
     @Autowired
     UserService userService;
@@ -37,7 +37,10 @@ public class RequestController {
     @DeleteMapping("/{id}")
     public String deleteRequestById(@PathVariable("id") Integer id){
         boolean found = userService.deleteRequestById(id);
-        return "";
+        if(found){
+            return "Request deleted by ID" + id;
+        }
+        return "Can't delete user with ID " + id;
     }
 
 }
