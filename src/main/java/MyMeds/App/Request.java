@@ -10,7 +10,7 @@ import java.util.List;
 public class Request {
     //Data on a request should never be null
     @Id
-    private Integer key = hashCode();
+    private Integer request_id = hashCode();
     @Column(nullable = false)
     private String docUsername;
     @Column(nullable = false)
@@ -19,7 +19,7 @@ public class Request {
     private String drugName;
 
     @ManyToOne(cascade = CascadeType.PERSIST)//Many doctors can have assaigned to a Request, but the request is just for one doctor
-    @JoinColumn(name="doctor")
+    @JoinTable(name = "doctor_requests")
     @JsonIgnore
     private Doctor doctor;
 
@@ -33,7 +33,7 @@ public class Request {
 
     //GETTERS
     public Integer getPrimaryKey(){
-        return key;
+        return request_id;
     }
     public String getDocUsername(){
         return docUsername;
