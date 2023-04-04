@@ -13,7 +13,7 @@ public class Doctor extends User{
     private String token= UUID.randomUUID().toString();
     @ManyToMany(mappedBy = "doctors")
     private List<Patient> patients;
-    @OneToMany(mappedBy = "doctors")
+    @OneToMany(mappedBy = "doctor")
     private List<Request> requests;
     @Column(unique = true, nullable = false)
     private String mail;

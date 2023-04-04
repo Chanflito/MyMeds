@@ -18,12 +18,10 @@ public class Request {
     @Column(nullable = false)
     private String drugName;
 
-    @OneToMany//Many doctors can have assaigned to a Request, but the request is just for one doctor
-    @JoinTable(name="doctor_request", joinColumns = @JoinColumn(name = "request_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
-    )
+    @ManyToOne(cascade = CascadeType.PERSIST)//Many doctors can have assaigned to a Request, but the request is just for one doctor
+    @JoinColumn(name="doctor")
     @JsonIgnore
-    private List<Doctor> assigned;
+    private Doctor doctor;
 
     public Request(){}//Constructor for spring
 
@@ -31,7 +29,6 @@ public class Request {
         this.docUsername = docUsername;
         this.phUsername = phUsername;
         this.drugName = drugName;
-        this.assigned = new ArrayList<>();
     }
 
     //GETTERS
@@ -47,9 +44,8 @@ public class Request {
     public String getDrugName(){
         return drugName;
     }
+    public Doctor getDoctorAssigned(){return doctor;}
 
     //SETTERS
-    public void addAssignedDoctor(Doctor doc){if(!assigned.contains(doc)){assigned.add(doc);}}
-    public void removeAssignedDoctor(Doctor doc){if(assigned.contains(doc)){assigned.remove(doc);}}
-
+    public void setDoctor(Doctor doc){doctor = doc;}
 }

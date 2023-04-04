@@ -206,7 +206,7 @@ public class UserService {
             }
             else{
                 Request req = new Request(doc.getUsername(), p.getUsername(), drugName);
-                req.addAssignedDoctor(doc);
+                req.setDoctor(doc);
                 doc.addRequest(req);
                 doctorRepository.save(doc);
                 requestRepository.save(req);
