@@ -25,15 +25,15 @@ public class LoginController {
         Patient patient=userService.checkLoginPatient(request.getMail(), request.getPassword());
         Pharmacy pharmacy=userService.checkLoginPharmacy(request.getMail(), request.getPassword());
         if (patient!=null){
-            patient.setToken(UUID.randomUUID().toString());
+            userService.changePatientToken(patient.getDni());
             return patient;
         }
         if (doctor!=null){
-            doctor.setToken(UUID.randomUUID().toString());
+            userService.changeDoctorToken(doctor.getPrimarykey());
             return doctor;
         }
         if (pharmacy!=null){
-            pharmacy.setToken(UUID.randomUUID().toString());
+            userService.changePharmacyToken(pharmacy.getRegistNumber());
             return pharmacy;
         }
         else{

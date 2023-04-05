@@ -12,7 +12,7 @@ public class TokenController {
     UserService userService;
     //Si alguno de los 3 es true, quiere decir que el token sigue siendo el mismo, de lo contrario va a retornar false
     //Si los 3 es false, me redirecciona al login.
-    @GetMapping(path = {"/{id}"})
+    @GetMapping(path = {"/{id}/checkToken"})
     public boolean checkUserToken(@PathVariable Integer id,@RequestBody String token){
         Boolean doctorToken=userService.checkDoctorTokenById(id,token);
         Boolean patientToken=userService.checkPatientTokenById(id,token);

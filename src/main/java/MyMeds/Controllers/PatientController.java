@@ -59,13 +59,6 @@ public class PatientController {
     public boolean makeRequestToDoctorById(@PathVariable Integer id,@RequestBody RequestData data){
         //If isDone == false, doctor does not have a signature
         boolean isDone = this.userService.addRequest(id,data.getDocId(), data.getDrugName());
-        if(isDone){
-//            return "Request from patient " + id + " has been done to doctor " + data.getDocId() + " for " + data.getDrugName();
-            return true;
-        }
-        else{
-//            return "The patient " + id + " is not uploaded.";
-            return false;
-        }
+        return isDone;
     }
 }

@@ -165,6 +165,23 @@ public class UserService {
             throw new UserNotFoundException(p_id);
         })).orElseThrow(()->new UserNotFoundException(doc_id));
     }
+    public Optional<Patient> deleteDoctorPatientById(Integer patientID, Integer doctorID){
+        return Optional.of(doctorRepository.findById(doctorID).map(doc->{
+            Optional<Patient> search = patientRepository.findById(patientID);
+            boolean found=doc.searchPatient(patientID);
+            if(search.isPresent() && found){
+                doc.removePatient(search);
+                search.get().removeDoctor(doc);
+                doctorRepository.save(doc);
+                return patientRepository.save(search.get());
+            }
+            else if (found){
+                throw new UserRegisteredException();
+            }
+            throw new UserNotFoundException(patientID);
+        })).orElseThrow(()->new UserNotFoundException(doctorID));
+    }
+
 
     //--------------------------REQUESTS-FROM-PATIENTS-TO-DOCTORS--------------------------------------
 
