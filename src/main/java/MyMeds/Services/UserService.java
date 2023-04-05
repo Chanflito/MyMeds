@@ -195,21 +195,23 @@ public class UserService {
     public boolean addRequest(Integer patientId,Integer docId, String drugName){
         Optional<Doctor> doc_entity = doctorRepository.findById(docId);
         Optional<Patient> patient_entity = patientRepository.findById(patientId);
-        if(doc_entity.isEmpty() || patient_entity.isEmpty()){
+        if(!doc_entity.isPresent() && !patient_entity.isPresent()){
             throw new UserNotFoundException();
         }
         else{
             Doctor doc = doc_entity.get();
             Patient p = patient_entity.get();
-            if(doc.getSignature() != null){
+            if(!doc.HasPatient(p)){
                 return false;
             }
             else{
                 Request req = new Request(doc.getUsername(), p.getUsername(), drugName);
-                req.setDoctor(doc);
-                doc.addRequest(req);
-                doctorRepository.save(doc);
                 requestRepository.save(req);
+                Request req2 = requestRepository.findById(req.getPrimaryKey()).get();
+                req2.setDoctor(doc);
+                doc.addRequest(req2);
+                requestRepository.save(req2);
+                doctorRepository.save(doc);
                 return true;
             }
         }

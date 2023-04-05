@@ -2,6 +2,7 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Patient;
 import MyMeds.App.Request;
+import MyMeds.App.RequestData;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +56,14 @@ public class PatientController {
     }
 
     @PutMapping("/{id}/makeRequest")
-    public String makeRequestToDoctorById(@PathVariable Integer id,@RequestBody Integer docId, @RequestBody String drugName){
+    public String makeRequestToDoctorById(@PathVariable Integer id,@RequestBody RequestData data){
         //If isDone == false, doctor does not have a signature
-        boolean isDone = this.userService.addRequest(id,docId, drugName);
+        boolean isDone = this.userService.addRequest(id,data.getDocId(), data.getDrugName());
         if(isDone){
-            return "Request from patient" + id + " has been done to doctor " + docId + "for " + drugName;
+            return "Request from patient " + id + " has been done to doctor " + data.getDocId() + " for " + data.getDrugName();
         }
         else{
-            return "Doctor has no signature yet...";
+            return "The patient " + id + " is not uploaded.";
         }
     }
 }

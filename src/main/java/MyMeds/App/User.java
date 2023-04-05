@@ -8,7 +8,7 @@ class User{
    private Integer id;
     @Column(unique = true)
    private String username;
-    @Column
+    @Column(nullable = false)
    private String password;
    public User(Integer id, String username, String password){
     this.id = id;

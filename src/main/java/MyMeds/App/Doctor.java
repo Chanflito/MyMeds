@@ -73,7 +73,6 @@ public class Doctor extends User{
         return new Recipe(this.signature, this.getPrimarykey(), drugName, phRegistNumber);
     }
 
-
     public Recipe MakeAndSend(boolean isReject, String drugName, Integer phRegistNumber){
         //If return is is_reject equals true, the recipe is rejected
         //reject is always false unless is changed
@@ -85,8 +84,11 @@ public class Doctor extends User{
         }
     }
     
-    public void RegistPatient(Integer dni){
-        //Adds a new patient to his DB
+    public boolean HasPatient(Patient p){
+        if(patients.contains(p)){
+            return true;
+        }
+        return false;
     }
 
     public Boolean searchPatient(Integer patientId){

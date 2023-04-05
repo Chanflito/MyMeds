@@ -3,9 +3,6 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 public class Request {
     //Data on a request should never be null
@@ -14,7 +11,7 @@ public class Request {
     @Column(nullable = false)
     private String docUsername;
     @Column(nullable = false)
-    private String phUsername;
+    private String pUsername;
     @Column(nullable = false)
     private String drugName;
 
@@ -27,7 +24,7 @@ public class Request {
 
     public Request(String docUsername, String phUsername, String drugName){
         this.docUsername = docUsername;
-        this.phUsername = phUsername;
+        this.pUsername = phUsername;
         this.drugName = drugName;
     }
 
@@ -38,8 +35,8 @@ public class Request {
     public String getDocUsername(){
         return docUsername;
     }
-    public String getPhUsername(){
-        return phUsername;
+    public String getPUsername(){
+        return pUsername;
     }
     public String getDrugName(){
         return drugName;
