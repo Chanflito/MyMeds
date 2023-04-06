@@ -39,21 +39,30 @@ public class UserService {
 
     //---------------REGISTER PART-------------------------------------------
     public Doctor registerDoctor(Doctor doctor){
-        if (doctorRepository.findById(doctor.getPrimarykey()).isEmpty() && doctorRepository.findByMail(doctor.getMail())==null){
+        if (doctorRepository.findById(doctor.getPrimarykey()).isEmpty() &&
+                doctorRepository.findByMailIgnoreCase(doctor.getMail())==null &&
+                patientRepository.findByMailIgnoreCase(doctor.getMail())==null &&
+                pharmacyRepository.findByMailIgnoreCase(doctor.getMail())==null){
             return doctorRepository.save(doctor);
         }
         return null;
     }
 
     public Patient registerPatient(Patient patient){
-        if (patientRepository.findById(patient.getPrimarykey()).isEmpty() && patientRepository.findByMail(patient.getMail())==null){
+        if (patientRepository.findById(patient.getPrimarykey()).isEmpty() &&
+                patientRepository.findByMailIgnoreCase(patient.getMail())==null &&
+                pharmacyRepository.findByMailIgnoreCase(patient.getMail())==null &&
+                doctorRepository.findByMailIgnoreCase(patient.getMail())==null){
             return patientRepository.save(patient);
         }
         return null;
     }
 
     public Pharmacy registerPharmacy(Pharmacy pharmacy){
-        if (pharmacyRepository.findById(pharmacy.getPrimarykey()).isEmpty() && pharmacyRepository.findByMail(pharmacy.getMail())==null){
+        if (pharmacyRepository.findById(pharmacy.getPrimarykey()).isEmpty() &&
+                patientRepository.findByMailIgnoreCase(pharmacy.getMail())==null &&
+                pharmacyRepository.findByMailIgnoreCase(pharmacy.getMail())==null &&
+                doctorRepository.findByMailIgnoreCase(pharmacy.getMail())==null){
             return pharmacyRepository.save(pharmacy);
         }
         return null;
@@ -115,7 +124,7 @@ public class UserService {
 
     //Verifica si el paciente se encuentra registrador, si encuentra el mail y la contraseña se verifica si ambos coinciden con el primaryKey.
     public Patient checkLoginPatient(String mail,String password){
-        Patient patientWithMail=patientRepository.findByMail(mail);
+        Patient patientWithMail=patientRepository.findByMailIgnoreCase(mail);
         Patient patientWithPassword=patientRepository.findByPassword(password);
         if (patientWithMail!=null && patientWithPassword!=null){
             if (Objects.equals(patientWithMail.getPrimarykey(), patientWithPassword.getPrimarykey())){
@@ -126,7 +135,7 @@ public class UserService {
     }
 
     public Doctor checkLoginDoctor(String mail,String password){
-        Doctor doctorWithMail=doctorRepository.findByMail(mail);
+        Doctor doctorWithMail=doctorRepository.findByMailIgnoreCase(mail);
         Doctor doctorWithPassword=doctorRepository.findByPassword(password);
         if (doctorWithMail!=null && doctorWithPassword!=null){
             if (Objects.equals(doctorWithMail.getPrimarykey(), doctorWithPassword.getPrimarykey())){
@@ -137,7 +146,7 @@ public class UserService {
     }
 
     public Pharmacy checkLoginPharmacy(String mail,String password){
-        Pharmacy pharmacyWithMail=pharmacyRepository.findByMail(mail);
+        Pharmacy pharmacyWithMail=pharmacyRepository.findByMailIgnoreCase(mail);
         Pharmacy pharmacyWithPassword=pharmacyRepository.findByPassword(password);
         if (pharmacyWithMail!=null && pharmacyWithPassword!=null){
             if (Objects.equals(pharmacyWithMail.getPrimarykey(),pharmacyWithPassword.getPrimarykey())){
@@ -242,48 +251,5 @@ public class UserService {
     //Primero busca el paciente en la base de datos, si lo encuentra
     //verifica si el token que tiene ese paciente es el mismo con el que tiene en el localStorage, si es el mismo retorna true
     //otherwise, false.
-    public boolean checkPatientTokenById(Integer patientID, String token){
-        Optional<Patient> patientFound=patientRepository.findById(patientID);
-        return patientFound.filter(patient -> Objects.equals(patient.getToken(), token)).isPresent();
-    }
 
-
-    public boolean checkDoctorTokenById(Integer doctorID, String token){
-        Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
-        return doctorFound.filter(doctor -> Objects.equals(doctor.getToken(), token)).isPresent();
-    }
-
-    public boolean checkPharmacyTokenById (Integer pharmacyID, String token){
-        Optional<Pharmacy> pharmacyFound=pharmacyRepository.findById(pharmacyID);
-        return pharmacyFound.filter(pharmacy -> Objects.equals(pharmacy.getToken(), token)).isPresent();
-    };
-    //Cambiamos el token del usuario una vez que hace logout, debemos llamar a esta funcion.
-    public boolean changePatientToken(Integer userID){
-        Optional<Patient> patientFound=patientRepository.findById(userID);
-        if (patientFound.isPresent()){
-            patientFound.get().setToken(UUID.randomUUID().toString());
-            patientRepository.save(patientFound.get());
-            return true;
-        }
-        return false;
-    }
-
-    public boolean changePharmacyToken(Integer userID){
-        Optional<Pharmacy> pharmacyFound=pharmacyRepository.findById(userID);
-        if (pharmacyFound.isPresent()){
-            pharmacyFound.get().setToken(UUID.randomUUID().toString());
-            pharmacyRepository.save(pharmacyFound.get());
-            return true;
-        }
-        return false;
-    }
-    public boolean changeDoctorToken(Integer userID){
-        Optional<Doctor> doctorFound=doctorRepository.findById(userID);
-        if (doctorFound.isPresent()){
-            doctorFound.get().setToken(UUID.randomUUID().toString());
-            doctorRepository.save(doctorFound.get());
-            return true;
-        }
-        return false;
-    }
 }

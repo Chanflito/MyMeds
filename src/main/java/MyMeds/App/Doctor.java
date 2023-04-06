@@ -9,8 +9,6 @@ public class Doctor extends User{
     @Column(unique = true)
     private String signature;
     public Doctor(){}
-    @Column(unique = true)
-    private String token= UUID.randomUUID().toString();
     @ManyToMany(mappedBy = "doctors")
     private List<Patient> patients;
     @OneToMany(mappedBy = "doctor")
@@ -41,19 +39,11 @@ public class Doctor extends User{
     public String getSignature(){
         return signature;
     }
-    public UserType getUserType() {
-        return userType;
-    }
+
     public String getMail() {
         return mail;
     }
     public List<Patient> getPatients(){return patients;}
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public void setMail(String mail) {
         this.mail = mail;
@@ -65,6 +55,11 @@ public class Doctor extends User{
     }
     public void addRequest(Request req){if (!requests.contains(req)){requests.add(req);}}
     public void removeRequest(Request req){if(requests.contains(req)){requests.remove(req);}}
+
+    @Override
+    public UserType getUserType() {
+        return userType;
+    }
 
     //METHODS
 

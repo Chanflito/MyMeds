@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient,Integer> {
-    Patient findByMail(String mail);
+    Patient findByMailIgnoreCase(String mail);
     Patient findByPassword(String password);
 }

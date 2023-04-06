@@ -4,6 +4,8 @@ import MyMeds.App.Pharmacy;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,25 +17,25 @@ import java.util.Optional;
 public class PharmacyController {
     @Autowired
     UserService userService;
-    @GetMapping()
-    public List<Pharmacy>getPharmacy(){
-        return userService.getPharmacys();
+    @GetMapping("/getPharmacy")
+    public ResponseEntity<?> getPharmacy(){
+        return new ResponseEntity<>(userService.getPharmacys(), HttpStatus.FOUND);
     }
 
-    @PostMapping
-    public Pharmacy savePharmacy(@RequestBody Pharmacy pharmacy){
+    @PostMapping("/savePharmacy")
+    public ResponseEntity<?> savePharmacy(@RequestBody Pharmacy pharmacy){
         if (this.userService.registerPharmacy(pharmacy)==null){
             throw new UserRegisteredException();
         }
-        return pharmacy;
+        return new ResponseEntity<>(pharmacy,HttpStatus.CREATED);
     }
 
-    @GetMapping(path="/{id}")
-    public Optional<Pharmacy> getPharmacyById(@PathVariable("id") Integer id){
-        return this.userService.getPharmacyById(id);
+    @GetMapping(path="/getPharmacyById/{id}")
+    public ResponseEntity<?> getPharmacyById(@PathVariable("id") Integer id){
+        return new ResponseEntity<>(this.userService.getPharmacyById(id),HttpStatus.FOUND);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deletePharmacyById/{id}")//Destructive method bullshit.
     public String deletePharmacyById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deletePharmacyById(id);
         if (founded){

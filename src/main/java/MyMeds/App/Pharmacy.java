@@ -12,8 +12,6 @@ public class Pharmacy extends User{
     private String mail;
     @Transient
     private final UserType userType=UserType.PHARMACY;
-    @Column(unique = true)
-    private String  token= UUID.randomUUID().toString();
     public Pharmacy(){}
 
 
@@ -22,12 +20,6 @@ public class Pharmacy extends User{
         this.mail=mail;
     }
     //GETTERS AND SETTERS
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
     public Integer getRegistNumber(){
         return super.getPrimarykey();
     }
@@ -38,6 +30,7 @@ public class Pharmacy extends User{
         return super.getPassword();
     }
 
+    @Override
     public UserType getUserType() {
         return userType;
     }

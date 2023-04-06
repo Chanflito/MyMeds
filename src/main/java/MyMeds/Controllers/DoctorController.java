@@ -21,25 +21,25 @@ public class DoctorController {
     UserService userService;
     @Autowired
     TokenController tokenController;
-    @GetMapping()//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
-    public List<Doctor> getDoctors() {
-        return userService.getDoctors();
+    @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
+    public ResponseEntity<?> getDoctors() {
+        return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
     }
 
-    @PostMapping//Recibe una Request con un username, password etc y crea un nuevo doctor en la base de datos.
-    public Doctor saveDoctor(@RequestBody Doctor doctor) {
+    @PostMapping("/saveDoctor")//Recibe una Request con un username, password etc y crea un nuevo doctor en la base de datos.
+    public ResponseEntity<?> saveDoctor(@RequestBody Doctor doctor) {
         if (this.userService.registerDoctor(doctor)==null){
             throw new UserRegisteredException();
         }
-        return doctor;
+        return new ResponseEntity<>(doctor,HttpStatus.CREATED);
     }
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/getDoctorById/{id}")
 //Busca los doctores en la base de datos mediante un ID y retorna el doctor en formato JSON con sus atributos.
-    public Optional<Doctor> getDoctorById(@PathVariable("id") Integer id) {
-        return this.userService.getDoctorById(id);
+    public ResponseEntity<?> getDoctorById(@PathVariable("id") Integer id) {
+        return new ResponseEntity<>(this.userService.getDoctorById(id),HttpStatus.FOUND);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteDoctorById/{id}")
 //Busca en la base de datos el doctor y lo borra, para hacer uso de la misma hay que hacer un DELETE en la url /doctor/id
     public String deleteDoctorById(@PathVariable("id") Integer id) {
         boolean founded = this.userService.deleteDoctorById(id);
@@ -50,20 +50,17 @@ public class DoctorController {
         }
     }
     @GetMapping("/listpatients/{id}")
-    public List<Patient> getPatientList(@PathVariable("id") Integer id){
-        return this.userService.getAllPatients(id);
+    public ResponseEntity<?> getPatientList(@PathVariable("id") Integer id){
+        return new ResponseEntity<>(this.userService.getAllPatients(id),HttpStatus.FOUND);
     }
 
     @PutMapping("/addpatient/{id}")
     public ResponseEntity<Optional<Doctor>> uploadPatientById(@PathVariable("id")Integer doc_id, @RequestBody Integer p_id, @RequestHeader String token){
-        if ((tokenController.checkUserToken(doc_id,token))){
-            return new ResponseEntity<>(userService.uploadPatientById(p_id, doc_id),HttpStatus.ACCEPTED);
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(userService.uploadPatientById(p_id, doc_id),HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/listpatients/{id}")
-    public Optional<Patient> removePatientByID(@PathVariable("id") Integer doctorID,@RequestBody Integer patientID){
-        return this.userService.deleteDoctorPatientById(patientID,doctorID);
+    public ResponseEntity<?> removePatientByID(@PathVariable("id") Integer doctorID,@RequestBody Integer patientID){
+        return new ResponseEntity<>(this.userService.deleteDoctorPatientById(patientID,doctorID),HttpStatus.OK);
     }
 }

@@ -6,7 +6,11 @@ import MyMeds.App.Patient;
 import MyMeds.App.Pharmacy;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Services.UserService;
+import MyMeds.jwt.JwtGenerator;
+import MyMeds.jwt.JwtGeneratorImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -16,27 +20,34 @@ import java.util.UUID;
 @RequestMapping("/login")
 @CrossOrigin
 public class LoginController {
+    private final UserService userService;
+    private final JwtGenerator jwtGenerator;
     @Autowired
-    UserService userService;
-    //Verificamos si el usuario existe en nuestra base de datos, de lo contrario retornamos excepcion.
+    public LoginController(UserService userService,JwtGenerator jwtGenerator){
+        this.userService=userService;
+        this.jwtGenerator=jwtGenerator;
+    }
+    //Una vez que se logea, genera un token.
     @PostMapping
-    public Object checkUser(@RequestBody AccountCreateRequest request){
+    public ResponseEntity<?> checkUser(@RequestBody AccountCreateRequest request){
         Doctor doctor=userService.checkLoginDoctor(request.getMail(), request.getPassword());
         Patient patient=userService.checkLoginPatient(request.getMail(), request.getPassword());
         Pharmacy pharmacy=userService.checkLoginPharmacy(request.getMail(), request.getPassword());
-        if (patient!=null){
-            userService.changePatientToken(patient.getDni());
-            return patient;
+        try{
+            if (patient!=null){
+                return new ResponseEntity<>(jwtGenerator.generateToken(patient),HttpStatus.CREATED);
+            }
+            if (doctor!=null){
+                return new ResponseEntity<>(jwtGenerator.generateToken(doctor),HttpStatus.CREATED);
+            }
+            if (pharmacy!=null){
+                return new ResponseEntity<>(jwtGenerator.generateToken(pharmacy),HttpStatus.CREATED);
+            }
+            else{
+                throw new UserNotFoundException();
+            }} catch (UserNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
-        if (doctor!=null){
-            userService.changeDoctorToken(doctor.getPrimarykey());
-            return doctor;
-        }
-        if (pharmacy!=null){
-            userService.changePharmacyToken(pharmacy.getRegistNumber());
-            return pharmacy;
-        }
-        else{
-            throw new UserNotFoundException();
-        }}
+    }
+
 }

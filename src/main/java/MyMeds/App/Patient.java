@@ -19,8 +19,6 @@ class Patient extends User{
     )
     @JsonIgnore
     private List<Doctor> doctors;
-    @Column(unique = true)
-    private String token= UUID.randomUUID().toString();
 
     @Column
     private Integer healthInsuarence; //Awaits until being set
@@ -37,9 +35,6 @@ class Patient extends User{
 
 //GETTERS Y SETTERS
 
-    public String getToken() {
-        return token;
-    }
 
     public Integer getDni(){
         return super.getPrimarykey();
@@ -56,12 +51,6 @@ class Patient extends User{
     public Integer getHealthInsuarence() {
         return healthInsuarence;
     }
-    public UserType getUserType() {
-        return userType;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public List<Doctor> getDoctors(){return this.doctors;}
 
@@ -74,6 +63,12 @@ class Patient extends User{
     public void addDoctor(Doctor d){if(!doctors.contains(d)){doctors.add(d);}}
     public void removeDoctor(Doctor d){
         doctors.remove(d);
+    }
+
+
+    @Override
+    public UserType getUserType() {
+        return userType;
     }
 
     //METHODS

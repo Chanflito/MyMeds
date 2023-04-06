@@ -10,6 +10,8 @@ class User{
    private String username;
     @Column(nullable = false)
    private String password;
+    @Transient
+    private UserType userType;
    public User(Integer id, String username, String password){
     this.id = id;
     this.username = username;
@@ -19,6 +21,9 @@ class User{
         this.id = id;
     }
 
+    public UserType getUserType() {
+        return userType;
+    }
     public User(){}
 
    public Integer getPrimarykey(){

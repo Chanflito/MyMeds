@@ -6,6 +6,8 @@ import MyMeds.App.RequestData;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,25 +19,25 @@ import java.util.Optional;
 public class PatientController {
     @Autowired
     UserService userService;
-    @GetMapping()
-    public List<Patient> getPatients(){
-        return userService.getPatients();
+    @GetMapping("/getPatients")
+    public ResponseEntity<?> getPatients(){
+        return new ResponseEntity<>(userService.getPatients(), HttpStatus.FOUND);
     }
 
-    @PostMapping
-    public Patient savePatient(@RequestBody Patient patient){
+    @PostMapping("/savePatient")
+    public ResponseEntity<?> savePatient(@RequestBody Patient patient){
         if (this.userService.registerPatient(patient)==null){
             throw new UserRegisteredException();
         }
-        return patient;
+        return new ResponseEntity<>(patient,HttpStatus.CREATED);
     }
 
-    @GetMapping(path="/{id}")
-    public Optional<Patient> getPatientById(@PathVariable("id") Integer id){
-        return this.userService.getPatientById(id);
+    @GetMapping(path="/getPatientById/{id}")
+    public ResponseEntity<?> getPatientById(@PathVariable("id") Integer id){
+        return new ResponseEntity<>(userService.getPatientById(id),HttpStatus.FOUND);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deletePatientById/{id}")
     public String deletePatientById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deletePatientById(id);
         if (founded){
@@ -45,14 +47,14 @@ public class PatientController {
         }
     }
     //Podemos cambiarle la contraseña al paciente.
-    @PutMapping("/{id}")
-    public Optional<Patient> changePatientPassword(@PathVariable("id") Integer id, @RequestBody Patient patient){
-        return this.userService.changePatientPasswordByID(id,patient);
+    @PutMapping("/changePatientPassword/{id}")
+    public ResponseEntity<?> changePatientPassword(@PathVariable("id") Integer id, @RequestBody Patient patient){
+        return new ResponseEntity<>(this.userService.changePatientPasswordByID(id,patient),HttpStatus.OK);
     }
     //Añadimos una obra social al paciente.
     @PutMapping("/{id}/addInsurance")
-    public Optional<Patient> addHealthInsurance(@PathVariable("id") Integer id,@RequestBody Integer healthInsurance){
-        return this.userService.addHealthInsuranceById(healthInsurance,id);
+    public ResponseEntity<?> addHealthInsurance(@PathVariable("id") Integer id,@RequestBody Integer healthInsurance){
+        return new ResponseEntity<>(this.userService.addHealthInsuranceById(healthInsurance,id),HttpStatus.OK);
     }
 
     @PutMapping("/{id}/makeRequest")

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor,Integer> {
-    Doctor findByMail(String mail);
+    Doctor findByMailIgnoreCase(String mail);
     Doctor findByPassword(String password);
     //"SELECT p.id, p.username FROM Doctor d JOIN d.patients p WHERE d.id = ?1" Deberia ser asi
     @Query("SELECT p FROM Doctor d JOIN d.patients p WHERE d.id = ?1")
