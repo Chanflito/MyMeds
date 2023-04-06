@@ -2,11 +2,8 @@ package MyMeds.App;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 public

@@ -2,7 +2,6 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Doctor;
 
-import MyMeds.App.Patient;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -55,7 +53,7 @@ public class DoctorController {
     }
 
     @PutMapping("/addpatient/{id}")
-    public ResponseEntity<Optional<Doctor>> uploadPatientById(@PathVariable("id")Integer doc_id, @RequestBody Integer p_id, @RequestHeader String token){
+    public ResponseEntity<Optional<Doctor>> uploadPatientById(@PathVariable("id")Integer doc_id, @RequestBody Integer p_id){
         return new ResponseEntity<>(userService.uploadPatientById(p_id, doc_id),HttpStatus.ACCEPTED);
     }
 

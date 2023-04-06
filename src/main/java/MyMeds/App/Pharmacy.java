@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
 
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 public class Pharmacy extends User{
