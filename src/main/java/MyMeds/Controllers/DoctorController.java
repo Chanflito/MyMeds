@@ -61,4 +61,8 @@ public class DoctorController {
     public ResponseEntity<?> removePatientByID(@PathVariable("id") Integer doctorID,@RequestBody Integer patientID){
         return new ResponseEntity<>(this.userService.deleteDoctorPatientById(patientID,doctorID),HttpStatus.OK);
     }
+    @GetMapping(path="/getPatientById/{id}")
+    public ResponseEntity<?> getPatientById(@PathVariable("id") Integer id){
+        return new ResponseEntity<>(userService.getPatientById(id),HttpStatus.FOUND);
+    }
 }

@@ -26,6 +26,7 @@ public class JwtGeneratorImpl implements  JwtGenerator {
                 setSubject(user.getUsername()).
                 setIssuedAt(new Date()).
                 claim("Role",user.getUserType()).
+                claim("id",user.getPrimarykey()).
                 signWith(secretKey).
                 compact();
 

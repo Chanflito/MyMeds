@@ -58,9 +58,13 @@ public class PatientController {
     }
 
     @PutMapping("/{id}/makeRequest")
-    public boolean makeRequestToDoctorById(@PathVariable Integer id,@RequestBody RequestData data){
+    public ResponseEntity<?> makeRequestToDoctorById(@PathVariable Integer id,@RequestBody RequestData data){
         //If isDone == false, doctor does not have a signature
         boolean isDone = this.userService.addRequest(id,data.getDocId(), data.getDrugName());
-        return isDone;
+        if (isDone){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
