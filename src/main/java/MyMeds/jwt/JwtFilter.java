@@ -27,27 +27,31 @@ public class JwtFilter extends GenericFilterBean {
         }
         else{
             try{
-                if (authHeader==null || !authHeader.startsWith("Bearer ")){
-                    throw new ServletException("Error");
+                if (authHeader!=null && authHeader.startsWith("Bearer " )) {
+                    String[] jwtParts = authHeader.substring(7).split("\\.");
+                    if (jwtParts.length == 3) {
+                        final String token = authHeader.substring(7); //Porque miramos apartir del Bearer
+                        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+                        request.setAttribute("claims", claims);
+                        request.setAttribute("user", servletRequest.getParameter("id"));
+                        String role = (String) claims.get("Role");
+                        String requestURL = request.getRequestURI();
+                        if (requestURL.startsWith("/patient") && role.equals("PATIENT")) {
+                            filterChain.doFilter(request, response);
+                        } else if (requestURL.startsWith("/doctor") && role.equals("DOCTOR")) {
+                            filterChain.doFilter(request, response);
+                        } else if (requestURL.startsWith("/pharmacy") && role.equals("PHARMACY")) {
+                            filterChain.doFilter(request, response);
+                        } else {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
+                        }
+                    } else {
+                        throw new ServletException("Error");
+                    }
+                }else{
+                    throw  new ServletException("Error");
                 }
-                final String token=authHeader.substring(7); //Porque miramos apartir del Bearer
-                Claims claims= Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-                request.setAttribute("claims",claims);
-                request.setAttribute("user",servletRequest.getParameter("id"));
-                String role=(String)claims.get("Role");
-                String requestURL=request.getRequestURI();
-                if (requestURL.startsWith("/patient") && role.equals("PATIENT")){
-                    filterChain.doFilter(request,response);
-                }
-                else if (requestURL.startsWith("/doctor") && role.equals("DOCTOR")){
-                    filterChain.doFilter(request,response);
-                }
-                else if (requestURL.startsWith("/pharmacy") && role.equals("PHARMACY")){
-                    filterChain.doFilter(request,response);
-                }
-                else {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
-                }
+
 
             }catch (SignatureException e){
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"The token is invalid.");
