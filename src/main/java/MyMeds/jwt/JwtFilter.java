@@ -9,10 +9,11 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.filter.GenericFilterBean;
 import static MyMeds.jwt.JwtGeneratorImpl.secretKey;
 import java.io.IOException;
-
+@CrossOrigin
 public class JwtFilter extends GenericFilterBean {
     //Makes filter on the url specified in FilterConfig, checks users Token.
     @Override
@@ -20,6 +21,9 @@ public class JwtFilter extends GenericFilterBean {
         final HttpServletRequest request=(HttpServletRequest) servletRequest;
         final HttpServletResponse response=(HttpServletResponse) servletResponse;
         final String authHeader=request.getHeader("authorization");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+        response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
         if ("OPTIONS".equals(request.getMethod())){
             response.setStatus(HttpServletResponse.SC_OK);

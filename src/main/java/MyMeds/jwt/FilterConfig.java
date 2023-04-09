@@ -16,7 +16,8 @@ public class FilterConfig {
         filter.addUrlPatterns("/doctor/getDoctors","/doctor/getDoctorById/*",
                 "/doctor/deletePatientById/*",
                 "/doctor/listpatients/*",
-                "/doctor/addpatient/*","/doctor/getPatientById/*"
+                "/doctor/addpatient/*","/doctor/getPatientById/*",
+                "/doctor/tokenDoctor"
         );
         //Patient Urls
         filter.addUrlPatterns("/patient/getPatients","/patient/getPatientById/*",

@@ -17,8 +17,6 @@ import java.util.Optional;
 public class DoctorController {
     @Autowired//Instancia Spring el servicio.
     UserService userService;
-    @Autowired
-    TokenController tokenController;
     @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
     public ResponseEntity<?> getDoctors() {
         return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
@@ -64,5 +62,9 @@ public class DoctorController {
     @GetMapping(path="/getPatientById/{id}")
     public ResponseEntity<?> getPatientById(@PathVariable("id") Integer id){
         return new ResponseEntity<>(userService.getPatientById(id),HttpStatus.FOUND);
+    }
+    @GetMapping(path="/tokenDoctor")
+    public ResponseEntity<?> checkToken(){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
