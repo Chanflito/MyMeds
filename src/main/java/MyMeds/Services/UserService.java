@@ -246,6 +246,9 @@ public class UserService {
     public RequestForDoctor RequestWithUsernameIDDrug(String drugName, String patientUsername, Integer requestID){
         return new RequestForDoctor(drugName, patientUsername, requestID);
     }
+    public DoctorForPatient DoctorWithUsernameID(Integer doctorID, String doctorUsername){
+        return new DoctorForPatient(doctorID, doctorUsername);
+    }
 
     //-------------------------REQUESTS-FROM-DOCTORS-TO-PATIENTS--------------------------------------
     public List<Patient> getAllPatients(Integer doctorID){
@@ -254,9 +257,17 @@ public class UserService {
     public List<Request> getAllRequestsFromDoctor(Integer doctorID){
         return doctorRepository.findByRequests(doctorID);
     }
+    //------------------------DOCTOR-FOR-PATIENTS-----------------------------------------------------
+    public List<Doctor> getAllDoctorsFromPatient(Integer patientID){
+        return patientRepository.findByDoctors(patientID);
+    }
     //-------------------------Token Manage-----------------------------------------------------------
     //Primero busca el paciente en la base de datos, si lo encuentra
     //verifica si el token que tiene ese paciente es el mismo con el que tiene en el localStorage, si es el mismo retorna true
     //otherwise, false.
 
+    //-------------------------FINDERS---------------------------------------------------------------
+    public boolean findPatientByID(Integer id){
+        return patientRepository.findById(id).isPresent();
+    }
 }

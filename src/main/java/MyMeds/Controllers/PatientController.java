@@ -1,15 +1,15 @@
 package MyMeds.Controllers;
 
-import MyMeds.App.Patient;
-import MyMeds.App.Request;
-import MyMeds.App.RequestData;
+import MyMeds.App.*;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,12 +38,12 @@ public class PatientController {
     }
 
     @DeleteMapping("/deletePatientById/{id}")
-    public String deletePatientById(@PathVariable("id") Integer id){
+    public ResponseEntity<?> deletePatientById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deletePatientById(id);
         if (founded){
-            return "User deleted by ID"+ id;
+            return new ResponseEntity<>(founded, HttpStatus.FOUND);
         }else{
-            return "Can't delete user by ID"+ id;
+            return new ResponseEntity<>(!founded, HttpStatus.NOT_FOUND);
         }
     }
     //Podemos cambiarle la contraseña al paciente.
@@ -70,5 +70,20 @@ public class PatientController {
     @GetMapping(path="/tokenPatient")
     public ResponseEntity<?> checkToken(){
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(path="/viewDoctors/{id}")
+    public ResponseEntity<?> viewDoctors(@PathVariable("id") Integer patientID){
+        //Retorna una lista con la informacion limitada sobre los doctores que tiene el paciente
+        if(!userService.findPatientByID(patientID)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Doctor> doctors = userService.getAllDoctorsFromPatient(patientID);
+        List<DoctorForPatient> answer = new ArrayList<>();
+        for(Doctor doctor : doctors){
+            DoctorForPatient doc = userService.DoctorWithUsernameID(doctor.getPrimarykey(), doctor.getUsername());
+            answer.add(doc);
+        }
+        return new ResponseEntity<>(answer, HttpStatus.ACCEPTED);
     }
 }
