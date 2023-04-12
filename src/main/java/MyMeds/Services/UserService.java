@@ -261,13 +261,9 @@ public class UserService {
     public List<Doctor> getAllDoctorsFromPatient(Integer patientID){
         return patientRepository.findByDoctors(patientID);
     }
-    //-------------------------Token Manage-----------------------------------------------------------
-    //Primero busca el paciente en la base de datos, si lo encuentra
-    //verifica si el token que tiene ese paciente es el mismo con el que tiene en el localStorage, si es el mismo retorna true
-    //otherwise, false.
-
     //-------------------------FINDERS---------------------------------------------------------------
     public boolean findPatientByID(Integer id){
         return patientRepository.findById(id).isPresent();
     }
+
 }

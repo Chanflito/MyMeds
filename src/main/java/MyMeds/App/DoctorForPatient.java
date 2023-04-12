@@ -9,4 +9,20 @@ public class DoctorForPatient {
         this.doctorID = doctorID;
         this.doctorUsername = doctorUsername;
     }
+
+    public Integer getDoctorID() {
+        return doctorID;
+    }
+
+    public void setDoctorID(Integer doctorID) {
+        this.doctorID = doctorID;
+    }
+
+    public String getDoctorUsername() {
+        return doctorUsername;
+    }
+
+    public void setDoctorUsername(String doctorUsername) {
+        this.doctorUsername = doctorUsername;
+    }
 }

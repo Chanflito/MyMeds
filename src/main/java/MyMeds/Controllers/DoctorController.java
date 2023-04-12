@@ -1,9 +1,7 @@
 package MyMeds.Controllers;
 
-import MyMeds.App.Doctor;
+import MyMeds.App.*;
 
-import MyMeds.App.Request;
-import MyMeds.App.RequestForDoctor;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,13 @@ public class DoctorController {
     }
     @GetMapping("/listpatients/{id}")
     public ResponseEntity<?> getPatientList(@PathVariable("id") Integer id){
-        return new ResponseEntity<>(this.userService.getAllPatients(id),HttpStatus.FOUND);
+        List<Patient> patientList=this.userService.getAllPatients(id);
+        List<PatientForDoctor> patientForDoctorList=new ArrayList<>();
+        for (Patient p: patientList){
+            PatientForDoctor patientForDoctor=new PatientForDoctor(p.getUsername(),p.getDni());
+            patientForDoctorList.add(patientForDoctor);
+        }
+        return new ResponseEntity<>(patientForDoctorList,HttpStatus.FOUND);
     }
 
     @PutMapping("/addpatient/{id}")
