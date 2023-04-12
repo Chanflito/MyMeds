@@ -243,7 +243,7 @@ public class UserService {
 
     }
     //-------------------------REQUESTS-FROM-DOCTORS-TO-PATIENTS--------------------------------------
-    public List<Patient> getAllPatients(Integer doctorID){
+    public Object[] getAllPatients(Integer doctorID){
         return doctorRepository.findByPatients(doctorID);
     }
     //-------------------------Token Manage-----------------------------------------------------------

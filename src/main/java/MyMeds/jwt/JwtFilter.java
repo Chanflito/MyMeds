@@ -24,7 +24,6 @@ public class JwtFilter extends GenericFilterBean {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-
         if ("OPTIONS".equals(request.getMethod())){
             response.setStatus(HttpServletResponse.SC_OK);
             filterChain.doFilter(request,response);

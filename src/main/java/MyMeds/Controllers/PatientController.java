@@ -67,4 +67,8 @@ public class PatientController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping(path="/tokenPatient")
+    public ResponseEntity<?> checkToken(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
