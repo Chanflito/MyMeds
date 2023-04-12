@@ -2,6 +2,8 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Doctor;
 
+import MyMeds.App.Request;
+import MyMeds.App.RequestForDoctor;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -66,5 +70,16 @@ public class DoctorController {
     @GetMapping(path="/tokenDoctor")
     public ResponseEntity<?> checkToken(){
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping(path="/viewRequests/{id}")
+    public ResponseEntity<?> getRequestsList(@PathVariable("id") Integer doctorID){
+        List<Request> requests = userService.getAllRequestsFromDoctor(doctorID);
+        List<RequestForDoctor> answer = new ArrayList<>();
+        for(Request r : requests) {//for Each loop
+            RequestForDoctor dto = userService.RequestWithUsernameIDDrug(r.getDrugName(), r.getPUsername(), r.getRequestId());
+            answer.add(dto);
+        }
+        return new ResponseEntity<>(answer,HttpStatus.FOUND);
     }
 }

@@ -203,7 +203,7 @@ public class UserService {
 
     public Request registerRequest(Request req){
         //If it finds an existing request with the same id, retuns null
-        if(requestRepository.findById(req.getPrimaryKey()).isEmpty()){
+        if(requestRepository.findById(req.getRequestId()).isEmpty()){
             return requestRepository.save(req);
         }
         return null;
@@ -232,7 +232,7 @@ public class UserService {
             else{
                 Request req = new Request(doc.getUsername(), p.getUsername(), drugName);
                 requestRepository.save(req);
-                Request req2 = requestRepository.findById(req.getPrimaryKey()).get();
+                Request req2 = requestRepository.findById(req.getRequestId()).get();
                 req2.setDoctor(doc);
                 doc.addRequest(req2);
                 requestRepository.save(req2);
@@ -242,9 +242,17 @@ public class UserService {
         }
 
     }
+    //-------------------------MAP DTOS---------------------------------------------------------------
+    public RequestForDoctor RequestWithUsernameIDDrug(String drugName, String patientUsername, Integer requestID){
+        return new RequestForDoctor(drugName, patientUsername, requestID);
+    }
+
     //-------------------------REQUESTS-FROM-DOCTORS-TO-PATIENTS--------------------------------------
-    public Object[] getAllPatients(Integer doctorID){
+    public List<Patient> getAllPatients(Integer doctorID){
         return doctorRepository.findByPatients(doctorID);
+    }
+    public List<Request> getAllRequestsFromDoctor(Integer doctorID){
+        return doctorRepository.findByRequests(doctorID);
     }
     //-------------------------Token Manage-----------------------------------------------------------
     //Primero busca el paciente en la base de datos, si lo encuentra

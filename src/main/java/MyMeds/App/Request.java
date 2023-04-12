@@ -29,7 +29,7 @@ public class Request {
     }
 
     //GETTERS
-    public Integer getPrimaryKey(){
+    public Integer getRequestId(){
         return request_id;
     }
     public String getDocUsername(){
