@@ -86,4 +86,13 @@ public class PatientController {
         }
         return new ResponseEntity<>(answer, HttpStatus.ACCEPTED);
     }
+
+    @GetMapping(path="/viewRequests/{id}")
+    public ResponseEntity<?> viewRequest(@PathVariable("id") Integer patientId){
+        List<RequestForPatient> requestForPatientList=userService.getAllRequestsFromPatient(patientId);
+        if (!requestForPatientList.isEmpty()){
+            return new ResponseEntity<>(requestForPatientList,HttpStatus.ACCEPTED);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND); //Patient has no request to doctors.
+    }
 }

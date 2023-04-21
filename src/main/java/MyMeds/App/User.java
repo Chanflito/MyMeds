@@ -6,7 +6,7 @@ public
 class User{
     @Id
    private Integer id;
-    @Column(unique = true)
+    @Column(unique = false)
    private String username;
     @Column(nullable = false)
    private String password;

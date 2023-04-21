@@ -22,7 +22,8 @@ public class FilterConfig {
         //Patient Urls
         filter.addUrlPatterns("/patient/getPatients","/patient/getPatientById/*",
                 "/patient/*/addInsurance",
-                "/patient/*/makeRequest","/patient/deletePatientById/*"
+                "/patient/*/makeRequest","/patient/deletePatientById/*",
+                "/patient/viewRequests/*"
                 );
         //Pharmacy Urls
         filter.addUrlPatterns("/pharmacy/getPharmacy",

@@ -70,9 +70,9 @@ class Patient extends User{
 
     //METHODS
     //Patient gives the simpliest information to app
-    public Request RequestRecipie(String docUsername, String phUsername, String drugName){
+    public Request RequestRecipie(String docUsername, String phUsername, String drugName,Integer patientID, Integer doctorID){
         //Mades a request for a drug that will be bought in a specific pharmacy
-        return new Request(docUsername, phUsername, drugName);
+        return new Request(docUsername, phUsername, drugName,patientID,doctorID);
     }
 
     public void Pay(){

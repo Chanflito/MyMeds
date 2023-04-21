@@ -9,6 +9,8 @@ import MyMeds.Repositorys.PharmacyRepository;
 import MyMeds.Repositorys.RequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -230,7 +232,7 @@ public class UserService {
                 return false;
             }
             else{
-                Request req = new Request(doc.getUsername(), p.getUsername(), drugName);
+                Request req = new Request(doc.getUsername(), p.getUsername(), drugName,patientId,docId);
                 requestRepository.save(req);
                 Request req2 = requestRepository.findById(req.getRequestId()).get();
                 req2.setDoctor(doc);
@@ -241,6 +243,14 @@ public class UserService {
             }
         }
 
+    }
+    public List<RequestForPatient> getAllRequestsFromPatient(Integer patientID){
+        List<Request> requestList=patientRepository.findPatientRequests(patientID);
+        List<RequestForPatient> requestForPatients=new ArrayList<>();
+        for(Request r: requestList){
+            requestForPatients.add(new RequestForPatient(r.getDocUsername(),r.getDrugName(),r.getRequestId()));
+        }
+        return requestForPatients;
     }
     //-------------------------MAP DTOS---------------------------------------------------------------
     public RequestForDoctor RequestWithUsernameIDDrug(String drugName, String patientUsername, Integer requestID){

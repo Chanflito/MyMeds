@@ -15,6 +15,10 @@ public class Request {
     @Column(nullable = false)
     private String drugName;
 
+    @Column(nullable = false)
+    private Integer patientID;
+    @Column(nullable = false)
+    private Integer doctorID;
     @ManyToOne(cascade = CascadeType.PERSIST)//Many doctors can have assaigned to a Request, but the request is just for one doctor
     @JoinTable(name = "doctor_requests")
     @JsonIgnore
@@ -22,10 +26,12 @@ public class Request {
 
     public Request(){}//Constructor for spring
 
-    public Request(String docUsername, String phUsername, String drugName){
+    public Request(String docUsername, String phUsername, String drugName, Integer patientID,Integer doctorID){
         this.docUsername = docUsername;
         this.pUsername = phUsername;
         this.drugName = drugName;
+        this.patientID=patientID;
+        this.doctorID=doctorID;
     }
 
     //GETTERS
@@ -42,6 +48,22 @@ public class Request {
         return drugName;
     }
     public Doctor getDoctorAssigned(){return doctor;}
+
+    public Integer getRequest_id() {
+        return request_id;
+    }
+
+    public String getpUsername() {
+        return pUsername;
+    }
+
+    public Integer getPatientID() {
+        return patientID;
+    }
+
+    public Integer getDoctorID() {
+        return doctorID;
+    }
 
     //SETTERS
     public void setDoctor(Doctor doc){doctor = doc;}
