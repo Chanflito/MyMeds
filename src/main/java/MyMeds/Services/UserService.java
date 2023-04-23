@@ -126,9 +126,8 @@ public class UserService {
     //Verifica si el paciente se encuentra registrador, si encuentra el mail y la contraseña se verifica si ambos coinciden con el primaryKey.
     public Patient checkLoginPatient(String mail,String password){
         Patient patientWithMail=patientRepository.findByMailIgnoreCase(mail);
-        Patient patientWithPassword=patientRepository.findByPassword(password);
-        if (patientWithMail!=null && patientWithPassword!=null){
-            if (Objects.equals(patientWithMail.getPrimarykey(), patientWithPassword.getPrimarykey())){
+        if (patientWithMail!=null){
+            if (Objects.equals(patientWithMail.getPassword(), password)){
                 return patientWithMail;
             }
         }
@@ -137,9 +136,8 @@ public class UserService {
 
     public Doctor checkLoginDoctor(String mail,String password){
         Doctor doctorWithMail=doctorRepository.findByMailIgnoreCase(mail);
-        Doctor doctorWithPassword=doctorRepository.findByPassword(password);
-        if (doctorWithMail!=null && doctorWithPassword!=null){
-            if (Objects.equals(doctorWithMail.getPrimarykey(), doctorWithPassword.getPrimarykey())){
+        if (doctorWithMail!=null){
+            if (Objects.equals(doctorWithMail.getPassword(),password)){
                 return doctorWithMail;
             }
         }
@@ -148,9 +146,8 @@ public class UserService {
 
     public Pharmacy checkLoginPharmacy(String mail,String password){
         Pharmacy pharmacyWithMail=pharmacyRepository.findByMailIgnoreCase(mail);
-        Pharmacy pharmacyWithPassword=pharmacyRepository.findByPassword(password);
-        if (pharmacyWithMail!=null && pharmacyWithPassword!=null){
-            if (Objects.equals(pharmacyWithMail.getPrimarykey(),pharmacyWithPassword.getPrimarykey())){
+        if (pharmacyWithMail!=null){
+            if (Objects.equals(pharmacyWithMail.getPassword(),password)){
                 return pharmacyWithMail;
             }
         }

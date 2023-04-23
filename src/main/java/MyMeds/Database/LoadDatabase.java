@@ -21,23 +21,24 @@ public class LoadDatabase {
                                    PatientRepository patientRepository,
                                    PharmacyRepository pharmacyRepository){
         return args -> {
-//            Doctor doctor1=new Doctor(2322222,"Marcos Medina","contraseña123","marcos_medina@gmail.com");
-//            Doctor doctor2=new Doctor(1111234,"Maria Garcia","con123","MariaGarcia78@gmail.com");
-//            Doctor doctor3=new Doctor(3322131,"Juan Perez","miPassword11","JuanPerez45@gmail.com");
-//            Doctor doctor4=new Doctor(1111234,"Ana Martinez","pass1333","AnaMartinez32@gmail.com");
-//            Doctor doctor5=new Doctor(9033221,"Luis Sanchez ","luissanchez122","LuisSanchez21@gmail.com");
+//            Doctor doctor1 = new Doctor(101, "Marcos Medina", "123", "marcos_medina@gmail.com");
+//            Doctor doctor2 = new Doctor(102, "Maria Garcia", "123", "maria_garcia@gmail.com");
+//            Doctor doctor3 = new Doctor(103, "Juan Perez", "123", "juan_perez@gmail.com");
+//            Doctor doctor4 = new Doctor(104, "Ana Martinez", "123", "ana_martinez@gmail.com");
+//            Doctor doctor5 = new Doctor(105, "Luis Sanchez", "123", "luis_sanchez@gmail.com");
 //
-//            Patient patient1=new Patient(12345678,"laura.gonzalez@gmail.com","Laura Gonzales","LGo#1234");
-//            Patient patient2=new Patient(23456789,"carlos.martinez@gmail.com","Carlos Martinez","CMart#5678");
-//            Patient patient3=new Patient(34567890,"ana.rodriguez@gmail.com","Ana Rodriguez","ARod#9012");
-//            Patient patient4=new Patient(45678901,"jorge.gomez@gmail.com","Jorge Gomez","JGom#2345");
-//            Patient patient5=new Patient(56789012,"isabel.lopez@gmail.com","Isabel Lopez","ILop#6789");
+//            Patient patient1 = new Patient(201, "laura_gonzales@gmail.com", "Laura Gonzales", "123");
+//            Patient patient2 = new Patient(202, "carlos_martinez@gmail.com", "Carlos Martinez", "123");
+//            Patient patient3 = new Patient(203, "ana_rodriguez@gmail.com", "Ana Rodriguez", "123");
+//            Patient patient4 = new Patient(204, "jorge_gomez@gmail.com", "Jorge Gomez", "123");
+//            Patient patient5 = new Patient(205, "isabel_lopez@gmail.com", "Isabel Lopez", "123");
 //
-//            Pharmacy farmacia1 = new Pharmacy(92893285, "Farmacia Los Pinos", "contraseña123", "farmacialospinos@gmail.com");
-//            Pharmacy farmacia2 = new Pharmacy(32131221, "Farmacia San José", "contraseña456", "farmaciasanjose@gmail.com");
-//            Pharmacy farmacia3 = new Pharmacy(86622133, "Farmacia del Parque", "contraseña789", "farmaciadelparque@gmail.com");
-//            Pharmacy farmacia4 = new Pharmacy(48484491, "Farmacia Nuestra Señora", "contraseña012", "farmacianuestraseñora@gmail.com");
-//            Pharmacy farmacia5 = new Pharmacy(99883312, "Farmacia Central", "contraseña345", "farmaciacentral@gmail.com");
+//            Pharmacy pharmacy1 = new Pharmacy(301, "Farmacia Los Pinos", "123", "farmacia_los_pinos@gmail.com");
+//            Pharmacy pharmacy2 = new Pharmacy(302, "Farmacia San José", "123", "farmacia_san_jose@gmail.com");
+//            Pharmacy pharmacy3 = new Pharmacy(303, "Farmacia del Parque", "123", "farmacia_del_parque@gmail.com");
+//            Pharmacy pharmacy4 = new Pharmacy(304, "Farmacia Nuestra Señora", "123", "farmacia_nuestra_senora@gmail.com");
+//            Pharmacy pharmacy5 = new Pharmacy(305, "Farmacia Central", "123", "farmacia_central@gmail.com");
+//
 //
 //            doctorRepository.save(doctor1);
 //            doctorRepository.save(doctor2);
@@ -51,11 +52,11 @@ public class LoadDatabase {
 //            patientRepository.save(patient4);
 //            patientRepository.save(patient5);
 //
-//            pharmacyRepository.save(farmacia1);
-//            pharmacyRepository.save(farmacia2);
-//            pharmacyRepository.save(farmacia3);
-//            pharmacyRepository.save(farmacia4);
-//            pharmacyRepository.save(farmacia5);
+//            pharmacyRepository.save(pharmacy1);
+//            pharmacyRepository.save(pharmacy2);
+//            pharmacyRepository.save(pharmacy3);
+//            pharmacyRepository.save(pharmacy4);
+//            pharmacyRepository.save(pharmacy5);
        };
     }
 }

@@ -14,7 +14,6 @@ public class FilterConfig {
         filter.setFilter(new JwtFilter());
         //Doctor Urls
         filter.addUrlPatterns("/doctor/getDoctors","/doctor/getDoctorById/*",
-                "/doctor/deletePatientById/*",
                 "/doctor/listpatients/*",
                 "/doctor/addpatient/*","/doctor/getPatientById/*",
                 "/doctor/tokenDoctor","/doctor/viewRequests/*"
@@ -22,13 +21,12 @@ public class FilterConfig {
         //Patient Urls
         filter.addUrlPatterns("/patient/getPatients","/patient/getPatientById/*",
                 "/patient/*/addInsurance",
-                "/patient/*/makeRequest","/patient/deletePatientById/*",
+                "/patient/*/makeRequest",
                 "/patient/viewRequests/*"
                 );
         //Pharmacy Urls
         filter.addUrlPatterns("/pharmacy/getPharmacy",
-                "/pharmacy/getPharmacyById/*",
-                "/pharmacy/deletePharmacyById/*");
+                "/pharmacy/getPharmacyById/*");
         return filter;
     }
 }
