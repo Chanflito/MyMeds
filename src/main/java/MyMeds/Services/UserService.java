@@ -273,4 +273,12 @@ public class UserService {
         return patientRepository.findById(id).isPresent();
     }
 
+    //-------------------------DELETE REQUESTS--------------------------------------------------------
+    public boolean deleteRequestInDoctor(Integer doctorID, Integer requestID){
+        Doctor doc = this.getDoctorById(doctorID).get();
+        if(doc == null || requestRepository.findById(requestID).isEmpty()){return false;}
+        doc.removeRequest(requestRepository.findById(requestID).get());
+        doctorRepository.save(doc);
+        return true;
+    }
 }

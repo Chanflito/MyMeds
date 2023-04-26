@@ -86,4 +86,14 @@ public class DoctorController {
         }
         return new ResponseEntity<>(answer,HttpStatus.FOUND);
     }
+
+    @DeleteMapping(path = "/deleteRequest/{id}")
+    public ResponseEntity<?> deleteRequest(@PathVariable("id") Integer doctorID, @RequestBody Integer requestID){
+        boolean doctorDelete = userService.deleteRequestInDoctor(doctorID, requestID);
+        if(doctorDelete){
+            userService.deleteRequestById(requestID);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
