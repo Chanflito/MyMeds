@@ -1,37 +1,78 @@
 package MyMeds.App;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Recipe {
+    @Column
     private String docSignature;
-    private Integer docRegistNumber;
+    @Column
     private String drugName;
-    private Integer phRegistNumber;
-    private boolean mark = false;
-    private Integer key = hashCode();
+    @Column
+    private Integer pharmacyID;
+    @Column
+    private boolean recipeIsMark = false;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer recipeID;
+    @ManyToOne
+    @JoinColumn(name="doctor_id")
+    private Doctor doctor;
 
-    public Recipe(String docSignature, Integer docRegistNumber, String drugName, Integer phRegistNumber){
+    public Recipe(String docSignature,String drugName, Integer pharmacyID){
         this.docSignature = docSignature;
-        this.docRegistNumber = docRegistNumber;
         this.drugName = drugName;
-        this.phRegistNumber = phRegistNumber;
+        this.pharmacyID = pharmacyID;
     }
 
+    public Recipe(){}
 //GETTERS AND SETTERS
-    public void SetMark(){
-        this.mark = true;
-    }
-    public Integer getPrimaryKey(){
-        return key;
-    }
-    public String getDocSignature(){
+
+    public String getDocSignature() {
         return docSignature;
     }
-    public Integer getDocRegistNumber(){
-        return docRegistNumber;
+
+    public void setDocSignature(String docSignature) {
+        this.docSignature = docSignature;
     }
-    public String getDrugName(){
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public String getDrugName() {
         return drugName;
     }
-    public Integer ph_regist_number(){
-        return phRegistNumber;
+
+    public void setDrugName(String drugName) {
+        this.drugName = drugName;
+    }
+
+    public Integer getPharmacyID() {
+        return pharmacyID;
+    }
+
+    public void setPharmacyID(Integer pharmacyID) {
+        this.pharmacyID = pharmacyID;
+    }
+
+    public boolean isRecipeIsMark() {
+        return recipeIsMark;
+    }
+
+    public void setRecipeIsMark(boolean recipeIsMark) {
+        this.recipeIsMark = recipeIsMark;
+    }
+
+    public Integer getRecipeID() {
+        return recipeID;
+    }
+
+    public void setRecipeID(Integer recipeID) {
+        this.recipeID = recipeID;
     }
 }

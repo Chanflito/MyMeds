@@ -13,6 +13,9 @@ public class Doctor extends User{
     private List<Patient> patients;
     @OneToMany(mappedBy = "doctor")
     private List<Request> requests;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<Recipe> recipes;
     @Column(unique = true, nullable = false)
     private String mail;
     @Transient
@@ -40,6 +43,14 @@ public class Doctor extends User{
         return signature;
     }
 
+    public List<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
+    }
+
     public String getMail() {
         return mail;
     }
@@ -65,7 +76,7 @@ public class Doctor extends User{
 
     private Recipe MakeRecipe(String drugName, Integer phRegistNumber){
         //Creates a recipe
-        return new Recipe(this.signature, this.getPrimarykey(), drugName, phRegistNumber);
+        return new Recipe(this.signature, drugName, phRegistNumber);
     }
 
     public Recipe MakeAndSend(boolean isReject, String drugName, Integer phRegistNumber){

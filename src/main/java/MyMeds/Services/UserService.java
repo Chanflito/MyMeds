@@ -3,10 +3,7 @@ package MyMeds.Services;
 import MyMeds.App.*;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Exceptions.UserRegisteredException;
-import MyMeds.Repositorys.DoctorRepository;
-import MyMeds.Repositorys.PatientRepository;
-import MyMeds.Repositorys.PharmacyRepository;
-import MyMeds.Repositorys.RequestRepository;
+import MyMeds.Repositorys.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +22,10 @@ public class UserService {
     PharmacyRepository pharmacyRepository;
     @Autowired
     RequestRepository requestRepository;
+
+    @Autowired
+    RecipeRepository recipeRepository;
+
     //Utiliza el repositorio para buscar los doctores en la base de datos.
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
@@ -280,5 +281,17 @@ public class UserService {
         doc.removeRequest(requestRepository.findById(requestID).get());
         doctorRepository.save(doc);
         return true;
+    }
+    /**----------------CREATE RECIPE-----------------------**/
+
+    public boolean createRecipe(Integer doctorID,Recipe recipe){
+        Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
+        if (doctorFound.isPresent()){
+            recipe.setDoctor(doctorFound.get());
+            recipeRepository.save(recipe);
+            doctorRepository.save(doctorFound.get());
+            return true;
+        }
+        return false;
     }
 }

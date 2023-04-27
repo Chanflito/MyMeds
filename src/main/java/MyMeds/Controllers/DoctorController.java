@@ -96,4 +96,13 @@ public class DoctorController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @PostMapping(path = "/createRecipe/{id}")
+    public ResponseEntity<?>createRecipe(@PathVariable("id") Integer doctorID,@RequestBody Recipe recipe){
+        boolean response=userService.createRecipe(doctorID,recipe);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
