@@ -19,6 +19,7 @@ public class Request {
     private Integer patientID;
     @Column(nullable = false)
     private Integer doctorID;
+
     @ManyToOne(cascade = CascadeType.PERSIST)//Many doctors can have assaigned to a Request, but the request is just for one doctor
     @JoinTable(name = "doctor_requests")
     @JsonIgnore

@@ -13,7 +13,6 @@ public class Doctor extends User{
     private List<Patient> patients;
     @OneToMany(mappedBy = "doctor")
     private List<Request> requests;
-
     @OneToMany(mappedBy = "doctor")
     private List<Recipe> recipes;
     @Column(unique = true, nullable = false)

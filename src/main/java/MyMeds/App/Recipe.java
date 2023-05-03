@@ -1,5 +1,6 @@
 package MyMeds.App;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,11 +16,26 @@ public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer recipeID;
+
     @ManyToOne
     @JoinColumn(name="doctor_id")
+    @JsonIgnore
     private Doctor doctor;
 
-    public Recipe(String docSignature,String drugName, Integer pharmacyID){
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "pharmacy_recipe")
+    @JsonIgnore
+    private Pharmacy pharmacy;
+
+    public Pharmacy getPharmacy() {
+        return pharmacy;
+    }
+
+    public void setPharmacy(Pharmacy pharmacy) {
+        this.pharmacy = pharmacy;
+    }
+
+    public Recipe(String docSignature, String drugName, Integer pharmacyID){
         this.docSignature = docSignature;
         this.drugName = drugName;
         this.pharmacyID = pharmacyID;

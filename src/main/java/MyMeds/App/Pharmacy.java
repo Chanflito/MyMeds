@@ -1,7 +1,6 @@
 package MyMeds.App;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -9,6 +8,10 @@ import java.util.List;
 public class Pharmacy extends User{
     @Column(unique = true)
     private String mail;
+    @OneToMany(mappedBy = "pharmacy")
+    @JsonIgnore
+    private List<Recipe> recipes;
+
     @Transient
     private final UserType userType=UserType.PHARMACY;
     public Pharmacy(){}
@@ -60,4 +63,7 @@ public class Pharmacy extends User{
     public void StampRecipe(Integer recipeKey){
         //Modifies the Recipe DB given it´s primary key
     }
+
+    public void addRecipe(Recipe rep){if(!recipes.contains(rep)){recipes.add(rep);}}
+    public void removeRecipe(Recipe rep){if(recipes.contains(rep)){recipes.remove(rep);}}
 }

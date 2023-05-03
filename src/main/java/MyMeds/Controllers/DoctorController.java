@@ -105,4 +105,15 @@ public class DoctorController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @PutMapping(path = "/sendRecipe")
+    public ResponseEntity<?> sendRecipe(@RequestBody RecipeSendToPharmacy data){
+        boolean done = userService.sendRecipe(data.getRecipeID(),data.getPharmacyID());
+        if(done){
+            return new ResponseEntity<>(done, HttpStatus.ACCEPTED);
+        }
+        else{
+            return new ResponseEntity<>(done, HttpStatus.NOT_FOUND);
+        }
+    }
 }

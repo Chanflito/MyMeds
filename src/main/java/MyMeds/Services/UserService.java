@@ -294,4 +294,17 @@ public class UserService {
         }
         return false;
     }
+    //------------------SEND RECIPE----------------------------------------------------------------------------
+
+    public boolean sendRecipe(Integer recipeID, Integer pharmacyID){
+        Recipe rep = this.recipeRepository.findById(recipeID).get();
+        Pharmacy pharmacy = this.pharmacyRepository.findById(pharmacyID).get();
+        if(rep == null || pharmacy == null){return false;}
+        rep.setPharmacy(pharmacy);
+        pharmacy.addRecipe(rep);
+        recipeRepository.save(rep);
+        pharmacyRepository.save(pharmacy);
+        return true;
+
+    }
 }
