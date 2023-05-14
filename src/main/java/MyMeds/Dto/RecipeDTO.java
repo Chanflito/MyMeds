@@ -1,9 +1,6 @@
-package MyMeds.App;
+package MyMeds.Dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 
 public class RecipeDTO {
 

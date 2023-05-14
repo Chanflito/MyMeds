@@ -2,6 +2,9 @@ package MyMeds.Controllers;
 
 import MyMeds.App.*;
 
+import MyMeds.Dto.ApprovedRecipeData;
+import MyMeds.Dto.PatientDTO;
+import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

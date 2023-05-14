@@ -1,4 +1,4 @@
-package MyMeds.App;
+package MyMeds.Dto;
 
 public class PatientDTO {
     String username;

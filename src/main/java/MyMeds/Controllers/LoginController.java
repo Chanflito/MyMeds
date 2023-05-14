@@ -1,6 +1,6 @@
 package MyMeds.Controllers;
 
-import MyMeds.App.AccountCreateRequest;
+import MyMeds.Dto.AccountCreateRequest;
 import MyMeds.App.Doctor;
 import MyMeds.App.Patient;
 import MyMeds.App.Pharmacy;

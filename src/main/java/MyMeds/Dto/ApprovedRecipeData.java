@@ -1,4 +1,4 @@
-package MyMeds.App;
+package MyMeds.Dto;
 
 public class ApprovedRecipeData {
     //Se usa como request body para crear una receta
