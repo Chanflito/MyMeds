@@ -3,7 +3,6 @@ package MyMeds.Controllers;
 import MyMeds.App.*;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/patient")
@@ -57,16 +55,17 @@ public class PatientController {
         return new ResponseEntity<>(this.userService.addHealthInsuranceById(healthInsurance,id),HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/makeRequest")
-    public ResponseEntity<?> makeRequestToDoctorById(@PathVariable Integer id,@RequestBody RequestData data){
+    @PutMapping("/{id}/makeRecipe")
+    public ResponseEntity<?> makeRequestForRecipeToDoctor(@PathVariable Integer id,@RequestBody InProcessRecipeData data){
         //If isDone == false, doctor does not have a signature
-        boolean isDone = this.userService.addRequest(id,data.getDocId(), data.getDrugName());
+        boolean isDone = this.userService.addRecipe(id,data.getDocId(), data.getDrugName());
         if (isDone){
             return new ResponseEntity<>(HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     @GetMapping(path="/tokenPatient")
     public ResponseEntity<?> checkToken(){
         return new ResponseEntity<>(HttpStatus.OK);
@@ -87,12 +86,9 @@ public class PatientController {
         return new ResponseEntity<>(answer, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(path="/viewRequests/{id}")
-    public ResponseEntity<?> viewRequest(@PathVariable("id") Integer patientId){
-        List<RequestForPatient> requestForPatientList=userService.getAllRequestsFromPatient(patientId);
-        if (!requestForPatientList.isEmpty()){
-            return new ResponseEntity<>(requestForPatientList,HttpStatus.ACCEPTED);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND); //Patient has no request to doctors.
+    @GetMapping(path="/viewRecipes/{id}")
+    public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID, @RequestParam("status") RecipeStatus status){
+        List<RecipeDTO> recipies=userService.findByRecipeStatusPatient(status, patientID);
+        return new ResponseEntity<>(recipies,HttpStatus.ACCEPTED);
     }
 }

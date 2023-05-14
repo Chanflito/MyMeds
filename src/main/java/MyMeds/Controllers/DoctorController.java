@@ -50,16 +50,16 @@ public class DoctorController {
     @GetMapping("/listpatients/{id}")
     public ResponseEntity<?> getPatientList(@PathVariable("id") Integer id){
         List<Patient> patientList=this.userService.getAllPatients(id);
-        List<PatientForDoctor> patientForDoctorList=new ArrayList<>();
+        List<PatientDTO> patientForDoctorList=new ArrayList<>();
         for (Patient p: patientList){
-            PatientForDoctor patientForDoctor=new PatientForDoctor(p.getUsername(),p.getDni());
+            PatientDTO patientForDoctor=new PatientDTO(p.getUsername(),p.getDni());
             patientForDoctorList.add(patientForDoctor);
         }
         return new ResponseEntity<>(patientForDoctorList,HttpStatus.FOUND);
     }
 
     @PutMapping("/addpatient/{id}")
-    public ResponseEntity<Optional<Doctor>> uploadPatientById(@PathVariable("id")Integer doc_id, @RequestBody Integer p_id){
+    public ResponseEntity<Optional<Doctor>> AddPatientById(@PathVariable("id")Integer doc_id, @RequestBody Integer p_id){
         return new ResponseEntity<>(userService.uploadPatientById(p_id, doc_id),HttpStatus.ACCEPTED);
     }
 
@@ -76,44 +76,32 @@ public class DoctorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(path="/viewRequests/{id}")
-    public ResponseEntity<?> getRequestsList(@PathVariable("id") Integer doctorID){
-        List<Request> requests = userService.getAllRequestsFromDoctor(doctorID);
-        List<RequestForDoctor> answer = new ArrayList<>();
-        for(Request r : requests) {//for Each loop
-            RequestForDoctor dto = userService.RequestWithUsernameIDDrug(r.getDrugName(), r.getPUsername(), r.getRequestId());
-            answer.add(dto);
-        }
-        return new ResponseEntity<>(answer,HttpStatus.FOUND);
+    @GetMapping(path="/viewRecipes/{id}")
+    public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer doctorID, @RequestParam("status") RecipeStatus status){
+        List<RecipeDTO> recipes = userService.findByRecipeStatusDoctor(status, doctorID);
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/deleteRequest/{id}")
-    public ResponseEntity<?> deleteRequest(@PathVariable("id") Integer doctorID, @RequestBody Integer requestID){
-        boolean doctorDelete = userService.deleteRequestInDoctor(doctorID, requestID);
-        if(doctorDelete){
-            userService.deleteRequestById(requestID);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping(path = "/createRecipe/{id}")
-    public ResponseEntity<?>createRecipe(@PathVariable("id") Integer doctorID,@RequestBody Recipe recipe){
-        boolean response=userService.createRecipe(doctorID,recipe);
+    @PutMapping(path = "/AproveRecipe/{id}")
+    public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestBody ApprovedRecipeData requested){
+        boolean response=userService.createRecipe(doctorID, requested);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(path = "/sendRecipe")
-    public ResponseEntity<?> sendRecipe(@RequestBody RecipeSendToPharmacy data){
-        boolean done = userService.sendRecipe(data.getRecipeID(),data.getPharmacyID());
+    @PutMapping(path = "/DeclineRecipe/{recipeID}")
+    public ResponseEntity<?> DeclineRecipe(@PathVariable("recipeID") Integer recipeID){
+        boolean done = userService.DeclineRecipe(recipeID);
         if(done){
-            return new ResponseEntity<>(done, HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        else{
-            return new ResponseEntity<>(done, HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path="/getAllPharmacys")
+    public ResponseEntity<?> getPharmacys(){
+        return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
     }
 }

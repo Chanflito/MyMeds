@@ -1,10 +1,10 @@
 package MyMeds.App;
 
-public class RequestData {
+public class InProcessRecipeData {
     private String drugName;
     private Integer docId;
-    public RequestData(){}
-    public RequestData(String drugName, Integer docId){
+    public InProcessRecipeData(){}
+    public InProcessRecipeData(String drugName, Integer docId){
         this.drugName = drugName;
         this.docId = docId;
     }

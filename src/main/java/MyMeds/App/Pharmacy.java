@@ -32,6 +32,14 @@ public class Pharmacy extends User{
         return super.getPassword();
     }
 
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
+    }
+
     @Override
     public UserType getUserType() {
         return userType;

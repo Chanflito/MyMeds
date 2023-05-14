@@ -21,11 +21,10 @@ public class UserService {
     @Autowired
     PharmacyRepository pharmacyRepository;
     @Autowired
-    RequestRepository requestRepository;
-
-    @Autowired
     RecipeRepository recipeRepository;
 
+
+    public record pharmacyDTO(Integer pharmacyID,String pharmacyName){}
     //Utiliza el repositorio para buscar los doctores en la base de datos.
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
@@ -173,6 +172,7 @@ public class UserService {
             throw new UserNotFoundException(p_id);
         })).orElseThrow(()->new UserNotFoundException(doc_id));
     }
+
     public Optional<Patient> deleteDoctorPatientById(Integer patientID, Integer doctorID){
         return Optional.of(doctorRepository.findById(doctorID).map(doc->{
             Optional<Patient> search = patientRepository.findById(patientID);
@@ -193,31 +193,8 @@ public class UserService {
 
     //--------------------------REQUESTS-FROM-PATIENTS-TO-DOCTORS--------------------------------------
 
-    public List<Request> getRequests(){
-        return requestRepository.findAll();
-    }
 
-    public Optional<Request> getRequestById(Integer id){
-        return Optional.ofNullable(requestRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)));
-    }
-
-    public Request registerRequest(Request req){
-        //If it finds an existing request with the same id, retuns null
-        if(requestRepository.findById(req.getRequestId()).isEmpty()){
-            return requestRepository.save(req);
-        }
-        return null;
-    }
-
-    public boolean deleteRequestById(Integer id){
-        if (!requestRepository.existsById(id)){
-            return false;
-        }
-        requestRepository.deleteById(id);
-        return true;
-    }
-
-    public boolean addRequest(Integer patientId,Integer docId, String drugName){
+    public boolean addRecipe(Integer patientId,Integer docId, String drugName){
         Optional<Doctor> doc_entity = doctorRepository.findById(docId);
         Optional<Patient> patient_entity = patientRepository.findById(patientId);
         if(!doc_entity.isPresent() && !patient_entity.isPresent()){
@@ -230,30 +207,22 @@ public class UserService {
                 return false;
             }
             else{
-                Request req = new Request(doc.getUsername(), p.getUsername(), drugName,patientId,docId);
-                requestRepository.save(req);
-                Request req2 = requestRepository.findById(req.getRequestId()).get();
-                req2.setDoctor(doc);
-                doc.addRequest(req2);
-                requestRepository.save(req2);
+                //crea una receta en estado IN_PROCESS
+                Recipe r = new Recipe();
+                r.setDoctorID(docId);
+                r.setPatientID(patientId);
+                r.setDrugName(drugName);
+                r.setDoctor(doc);
+                doc.addRecipe(r);
+                recipeRepository.save(r);
                 doctorRepository.save(doc);
                 return true;
             }
         }
 
     }
-    public List<RequestForPatient> getAllRequestsFromPatient(Integer patientID){
-        List<Request> requestList=patientRepository.findPatientRequests(patientID);
-        List<RequestForPatient> requestForPatients=new ArrayList<>();
-        for(Request r: requestList){
-            requestForPatients.add(new RequestForPatient(r.getDocUsername(),r.getDrugName(),r.getRequestId()));
-        }
-        return requestForPatients;
-    }
     //-------------------------MAP DTOS---------------------------------------------------------------
-    public RequestForDoctor RequestWithUsernameIDDrug(String drugName, String patientUsername, Integer requestID){
-        return new RequestForDoctor(drugName, patientUsername, requestID);
-    }
+
     public DoctorForPatient DoctorWithUsernameID(Integer doctorID, String doctorUsername){
         return new DoctorForPatient(doctorID, doctorUsername);
     }
@@ -262,9 +231,7 @@ public class UserService {
     public List<Patient> getAllPatients(Integer doctorID){
         return doctorRepository.findByPatients(doctorID);
     }
-    public List<Request> getAllRequestsFromDoctor(Integer doctorID){
-        return doctorRepository.findByRequests(doctorID);
-    }
+
     //------------------------DOCTOR-FOR-PATIENTS-----------------------------------------------------
     public List<Doctor> getAllDoctorsFromPatient(Integer patientID){
         return patientRepository.findByDoctors(patientID);
@@ -274,22 +241,31 @@ public class UserService {
         return patientRepository.findById(id).isPresent();
     }
 
-    //-------------------------DELETE REQUESTS--------------------------------------------------------
-    public boolean deleteRequestInDoctor(Integer doctorID, Integer requestID){
-        Doctor doc = this.getDoctorById(doctorID).get();
-        if(doc == null || requestRepository.findById(requestID).isEmpty()){return false;}
-        doc.removeRequest(requestRepository.findById(requestID).get());
-        doctorRepository.save(doc);
-        return true;
-    }
+
     /**----------------CREATE RECIPE-----------------------**/
 
-    public boolean createRecipe(Integer doctorID,Recipe recipe){
+    public boolean createRecipe(Integer doctorID, ApprovedRecipeData dto){
         Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
         if (doctorFound.isPresent()){
-            recipe.setDoctor(doctorFound.get());
-            recipeRepository.save(recipe);
+            if(dto.getDocSignature()==null){
+                return false;
+            }
+            Optional<Recipe> recipe = recipeRepository.findById(dto.getRecipeID());
+            Optional<Pharmacy> pharmacy = pharmacyRepository.findById(dto.getPharmacyID());
+            if(!recipe.isPresent() || !pharmacy.isPresent()){return false;}
+            Recipe r = recipe.get();
+            Pharmacy p = pharmacy.get();
+
+            r.setDocSignature(dto.getDocSignature());
+            r.setPharmacyID(dto.getPharmacyID());
+            r.setPharmacy(pharmacy.get());
+            r.setStatus(RecipeStatus.APPROVED);
+
+            p.addRecipe(r);
+
+            recipeRepository.save(r);
             doctorRepository.save(doctorFound.get());
+            pharmacyRepository.save(p);
             return true;
         }
         return false;
@@ -297,14 +273,51 @@ public class UserService {
     //------------------SEND RECIPE----------------------------------------------------------------------------
 
     public boolean sendRecipe(Integer recipeID, Integer pharmacyID){
-        Recipe rep = this.recipeRepository.findById(recipeID).get();
-        Pharmacy pharmacy = this.pharmacyRepository.findById(pharmacyID).get();
-        if(rep == null || pharmacy == null){return false;}
-        rep.setPharmacy(pharmacy);
-        pharmacy.addRecipe(rep);
-        recipeRepository.save(rep);
-        pharmacyRepository.save(pharmacy);
         return true;
-
     }
+
+    //-------------------------Metodos nuevos---------------------------------------------------------
+
+    public List<RecipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
+        List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
+        List<RecipeDTO> answer = new ArrayList<>();
+        for(Recipe r : recipes){
+            answer.add(new RecipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
+                    patientRepository.findById(r.getPatientID()).get().getUsername(),
+                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+        }
+        return answer;
+    }
+
+    public List<RecipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID){
+        List<Recipe> recipes = recipeRepository.findByStatusAndIDDoctor(status, doctorID);
+        List<RecipeDTO> answer = new ArrayList<>();
+        for(Recipe r : recipes){
+            answer.add(new RecipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
+                    patientRepository.findById(r.getPatientID()).get().getUsername(),
+                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+        }
+        return answer;
+    }
+
+    public boolean DeclineRecipe(Integer recipeID){
+        Optional<Recipe> r = recipeRepository.findById(recipeID);
+        if(!r.isPresent()){return false;}
+        Recipe recipe = r.get();
+        recipe.setStatus(RecipeStatus.DECLINED);
+        recipeRepository.save(recipe);
+        return true;
+    }
+
+    public List<pharmacyDTO> getAllPharmacys(){
+        List<pharmacyDTO> pharmacyDTOList=new ArrayList<>();
+        List<Pharmacy> pharmacies=pharmacyRepository.findAll();
+        for (Pharmacy p: pharmacies) {
+            pharmacyDTOList.add(new pharmacyDTO(p.getPrimarykey(),p.getUsername()));
+        }
+        return pharmacyDTOList;
+    }
+
 }

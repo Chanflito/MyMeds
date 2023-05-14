@@ -1,5 +1,6 @@
 package MyMeds.App;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -9,22 +10,24 @@ public class Doctor extends User{
     @Column(unique = true)
     private String signature;
     public Doctor(){}
-    @ManyToMany(mappedBy = "doctors")
-    private List<Patient> patients;
-    @OneToMany(mappedBy = "doctor")
-    private List<Request> requests;
-    @OneToMany(mappedBy = "doctor")
-    private List<Recipe> recipes;
+
     @Column(unique = true, nullable = false)
     private String mail;
     @Transient
     private final UserType userType=UserType.DOCTOR;
 
+    @OneToMany(mappedBy = "doctor")
+    @JsonIgnore
+    private List<Recipe> recipes;
+
+    @ManyToMany(mappedBy = "doctors")
+    private List<Patient> patients;
+
+
     public Doctor(Integer registerNumber, String userName, String password, String mail){
         super(registerNumber, userName, password);
         this.mail=mail;
         patients = new ArrayList<>();
-        requests = new ArrayList<>();
     }
 
 
@@ -63,8 +66,9 @@ public class Doctor extends User{
     public void removePatient(Optional<Patient> p){
         if(patients.contains(p.get())){patients.remove(p.get());}
     }
-    public void addRequest(Request req){if (!requests.contains(req)){requests.add(req);}}
-    public void removeRequest(Request req){if(requests.contains(req)){requests.remove(req);}}
+    public void addRecipe(Recipe r){if (!recipes.contains(r)){recipes.add(r);}}
+    public void removeRecipe(Recipe r){if(recipes.contains(r)){recipes.remove(r);}}
+
 
     @Override
     public UserType getUserType() {
@@ -72,22 +76,6 @@ public class Doctor extends User{
     }
 
     //METHODS
-
-    private Recipe MakeRecipe(String drugName, Integer phRegistNumber){
-        //Creates a recipe
-        return new Recipe(this.signature, drugName, phRegistNumber);
-    }
-
-    public Recipe MakeAndSend(boolean isReject, String drugName, Integer phRegistNumber){
-        //If return is is_reject equals true, the recipe is rejected
-        //reject is always false unless is changed
-        if(!isReject){
-            return this.MakeRecipe(drugName, phRegistNumber);
-        }
-        else{
-            return null;
-        }
-    }
     
     public boolean HasPatient(Patient p){
         if(patients.contains(p)){

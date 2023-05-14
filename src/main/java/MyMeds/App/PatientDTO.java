@@ -1,6 +1,6 @@
 package MyMeds.App;
 
-public class PatientForDoctor {
+public class PatientDTO {
     String username;
     Integer dni;
 
@@ -20,7 +20,7 @@ public class PatientForDoctor {
         this.dni = dni;
     }
 
-    public PatientForDoctor(String username, Integer dni) {
+    public PatientDTO(String username, Integer dni) {
         this.username = username;
         this.dni = dni;
     }

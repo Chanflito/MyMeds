@@ -7,20 +7,26 @@ import java.util.List;
 
 @Entity
 public
-class Patient extends User{
+class Patient extends User {
     @Column(unique = true, nullable = false)
     private String mail;
+    @Column
+    private Integer healthInsuarence; //Awaits until being set
+    @Transient
+    private final UserType userType = UserType.PATIENT;
+
     @ManyToMany
-    @JoinTable(name="doctor_patient", joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
+    @JoinTable(name = "doctor_patient", joinColumns = @JoinColumn(name = "patient_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "doctor_id", referencedColumnName = "id")
     )
     @JsonIgnore
     private List<Doctor> doctors;
 
-    @Column
-    private Integer healthInsuarence; //Awaits until being set
-    @Transient
-    private final UserType userType=UserType.PATIENT;
+    @OneToMany(mappedBy = "patient")
+    @JsonIgnore
+    private List<Recipe> recipes;
+
+
 
     public Patient(){}
 
@@ -70,10 +76,6 @@ class Patient extends User{
 
     //METHODS
     //Patient gives the simpliest information to app
-    public Request RequestRecipie(String docUsername, String phUsername, String drugName,Integer patientID, Integer doctorID){
-        //Mades a request for a drug that will be bought in a specific pharmacy
-        return new Request(docUsername, phUsername, drugName,patientID,doctorID);
-    }
 
     public void Pay(){
         //Pays for its drugs
