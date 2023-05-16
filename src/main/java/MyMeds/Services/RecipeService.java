@@ -2,7 +2,6 @@ package MyMeds.Services;
 
 import MyMeds.App.*;
 import MyMeds.Dto.ApprovedRecipeData;
-import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Repositorys.DoctorRepository;
 import MyMeds.Repositorys.PatientRepository;
@@ -80,11 +79,11 @@ public class RecipeService {
     }
 
     //-------------------------BUSQUEDAS-------------------------------------------------------------------
-    public List<RecipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
+    public List<recipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
         List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
-        List<RecipeDTO> answer = new ArrayList<>();
+        List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new RecipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
                     r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
                     patientRepository.findById(r.getPatientID()).get().getUsername(),
                     doctorRepository.findById(r.getDoctorID()).get().getUsername()));
@@ -92,11 +91,11 @@ public class RecipeService {
         return answer;
     }
 
-    public List<RecipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID){
+    public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID){
         List<Recipe> recipes = recipeRepository.findByStatusAndIDDoctor(status, doctorID);
-        List<RecipeDTO> answer = new ArrayList<>();
+        List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new RecipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
                     r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
                     patientRepository.findById(r.getPatientID()).get().getUsername(),
                     doctorRepository.findById(r.getDoctorID()).get().getUsername()));
@@ -104,11 +103,11 @@ public class RecipeService {
         return answer;
     }
 
-    public List<RecipeDTO> findeByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID){
+    public List<recipeDTO> findeByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID){
         List<Recipe> recipes = recipeRepository.findByStatusAndPharmacyID(status, pharmacyID);
-        List<RecipeDTO> answer = new ArrayList<>();
+        List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new RecipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
                     r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
                     patientRepository.findById(r.getPatientID()).get().getUsername(),
                     doctorRepository.findById(r.getDoctorID()).get().getUsername()));

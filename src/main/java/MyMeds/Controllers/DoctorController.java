@@ -3,8 +3,6 @@ package MyMeds.Controllers;
 import MyMeds.App.*;
 
 import MyMeds.Dto.ApprovedRecipeData;
-import MyMeds.Dto.PatientDTO;
-import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,13 +52,7 @@ public class DoctorController {
     }
     @GetMapping("/listpatients/{id}")
     public ResponseEntity<?> getPatientList(@PathVariable("id") Integer id){
-        List<Patient> patientList=this.userService.getAllPatients(id);
-        List<PatientDTO> patientForDoctorList=new ArrayList<>();
-        for (Patient p: patientList){
-            PatientDTO patientForDoctor=new PatientDTO(p.getUsername(),p.getDni());
-            patientForDoctorList.add(patientForDoctor);
-        }
-        return new ResponseEntity<>(patientForDoctorList,HttpStatus.FOUND);
+        return new ResponseEntity<>(userService.getAllPatientsFromDoctor(id),HttpStatus.FOUND);
     }
 
     @PutMapping("/addpatient/{id}")
@@ -84,7 +75,7 @@ public class DoctorController {
 
     @GetMapping(path="/viewRecipes/{id}")
     public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer doctorID, @RequestParam("status") RecipeStatus status){
-        List<RecipeDTO> recipes = recipeService.findByRecipeStatusDoctor(status, doctorID);
+        List<RecipeService.recipeDTO> recipes = recipeService.findByRecipeStatusDoctor(status, doctorID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 

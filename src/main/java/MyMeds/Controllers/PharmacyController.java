@@ -2,7 +2,6 @@ package MyMeds.Controllers;
 
 import MyMeds.App.Pharmacy;
 import MyMeds.App.RecipeStatus;
-import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
@@ -52,7 +51,7 @@ public class PharmacyController {
 
     @GetMapping(path= "/getRecipesByStatus/{id}")
     public ResponseEntity<?> getRecipesByStatus(@PathVariable("id") Integer pharmacyID, @RequestParam("status")RecipeStatus status){
-        List<RecipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
+        List<RecipeService.recipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 }

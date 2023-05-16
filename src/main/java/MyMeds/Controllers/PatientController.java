@@ -1,9 +1,7 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.*;
-import MyMeds.Dto.DoctorForPatient;
 import MyMeds.Dto.InProcessRecipeData;
-import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -90,7 +87,7 @@ public class PatientController {
 
     @GetMapping(path="/viewRecipes/{id}")
     public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID, @RequestParam("status") RecipeStatus status){
-        List<RecipeDTO> recipies= recipeService.findByRecipeStatusPatient(status, patientID);
+        List<RecipeService.recipeDTO> recipies= recipeService.findByRecipeStatusPatient(status, patientID);
         return new ResponseEntity<>(recipies,HttpStatus.ACCEPTED);
     }
 }

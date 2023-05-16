@@ -1,15 +1,10 @@
 package MyMeds.Services;
 
 import MyMeds.App.*;
-import MyMeds.Dto.ApprovedRecipeData;
-import MyMeds.Dto.DoctorForPatient;
-import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Repositorys.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,8 +36,13 @@ public class UserService {
         return  pharmacyRepository.findAll();
     }
 
-    public List<Patient> getAllPatients(Integer doctorID){
-        return doctorRepository.findByPatients(doctorID);
+    public List<patientDTO> getAllPatientsFromDoctor(Integer doctorID){
+        List<Patient> patients = doctorRepository.findByPatients(doctorID);
+        List<patientDTO> answer=new ArrayList<>();
+        for (Patient p: patients){
+            answer.add(new patientDTO(p.getUsername(), p.getDni()));
+        }
+        return answer;
     }
 
     public List<doctorDTO> getAllDoctorsFromPatient(Integer patientID){
@@ -226,6 +226,8 @@ public class UserService {
     }
 
     //-------------------------MAP-DTOS---------------------------------------------------------------
+
+    public record patientDTO(String username, Integer dni){}
 
     public record doctorDTO(Integer doctorID, String doctorUsername){}
 
