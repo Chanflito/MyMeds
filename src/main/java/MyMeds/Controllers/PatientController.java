@@ -5,6 +5,7 @@ import MyMeds.Dto.DoctorForPatient;
 import MyMeds.Dto.InProcessRecipeData;
 import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import java.util.List;
 @RequestMapping("/patient")
 @CrossOrigin
 public class PatientController {
+    @Autowired
+    RecipeService recipeService;
     @Autowired
     UserService userService;
     @GetMapping("/getPatients")
@@ -61,7 +64,7 @@ public class PatientController {
     @PutMapping("/{id}/makeRecipe")
     public ResponseEntity<?> makeRequestForRecipeToDoctor(@PathVariable Integer id,@RequestBody InProcessRecipeData data){
         //If isDone == false, doctor does not have a signature
-        boolean isDone = this.userService.addRecipe(id,data.getDocId(), data.getDrugName());
+        boolean isDone = this.recipeService.addRecipe(id,data.getDocId(), data.getDrugName());
         if (isDone){
             return new ResponseEntity<>(HttpStatus.OK);
         }else{
@@ -77,21 +80,17 @@ public class PatientController {
     @GetMapping(path="/viewDoctors/{id}")
     public ResponseEntity<?> viewDoctors(@PathVariable("id") Integer patientID){
         //Retorna una lista con la informacion limitada sobre los doctores que tiene el paciente
-        if(!userService.findPatientByID(patientID)){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        List<UserService.doctorDTO> answer = userService.getAllDoctorsFromPatient(patientID);
+        if(answer != null){
+            return new ResponseEntity<>(answer, HttpStatus.ACCEPTED);
         }
-        List<Doctor> doctors = userService.getAllDoctorsFromPatient(patientID);
-        List<DoctorForPatient> answer = new ArrayList<>();
-        for(Doctor doctor : doctors){
-            DoctorForPatient doc = userService.DoctorWithUsernameID(doctor.getPrimarykey(), doctor.getUsername());
-            answer.add(doc);
-        }
-        return new ResponseEntity<>(answer, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
     @GetMapping(path="/viewRecipes/{id}")
     public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID, @RequestParam("status") RecipeStatus status){
-        List<RecipeDTO> recipies=userService.findByRecipeStatusPatient(status, patientID);
+        List<RecipeDTO> recipies= recipeService.findByRecipeStatusPatient(status, patientID);
         return new ResponseEntity<>(recipies,HttpStatus.ACCEPTED);
     }
 }

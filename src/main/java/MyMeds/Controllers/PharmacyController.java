@@ -1,18 +1,25 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.Pharmacy;
+import MyMeds.App.RecipeStatus;
+import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/pharmacy")
 @CrossOrigin
 public class PharmacyController {
+    @Autowired
+    RecipeService recipeService;
     @Autowired
     UserService userService;
     @GetMapping("/getPharmacy")
@@ -34,12 +41,18 @@ public class PharmacyController {
     }
 
     @DeleteMapping("/deletePharmacyById/{id}")//Destructive method bullshit.
-    public String deletePharmacyById(@PathVariable("id") Integer id){
+    public boolean deletePharmacyById(@PathVariable("id") Integer id){
         boolean founded=this.userService.deletePharmacyById(id);
         if (founded){
-            return "User deleted with ID "+ id;
+            return founded;
         }else{
-            return "Can't delete user with ID "+ id;
+            return founded;
         }
+    }
+
+    @GetMapping(path= "/getRecipesByStatus/{id}")
+    public ResponseEntity<?> getRecipesByStatus(@PathVariable("id") Integer pharmacyID, @RequestParam("status")RecipeStatus status){
+        List<RecipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 }

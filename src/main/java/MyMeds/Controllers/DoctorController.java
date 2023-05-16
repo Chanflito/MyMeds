@@ -6,6 +6,7 @@ import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Dto.PatientDTO;
 import MyMeds.Dto.RecipeDTO;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import java.util.Optional;
 @RequestMapping("/doctor")
 @CrossOrigin
 public class DoctorController {
+    @Autowired
+    RecipeService recipeService;
     @Autowired//Instancia Spring el servicio.
     UserService userService;
     @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
@@ -81,13 +84,13 @@ public class DoctorController {
 
     @GetMapping(path="/viewRecipes/{id}")
     public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer doctorID, @RequestParam("status") RecipeStatus status){
-        List<RecipeDTO> recipes = userService.findByRecipeStatusDoctor(status, doctorID);
+        List<RecipeDTO> recipes = recipeService.findByRecipeStatusDoctor(status, doctorID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
     @PutMapping(path = "/AproveRecipe/{id}")
     public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestBody ApprovedRecipeData requested){
-        boolean response=userService.createRecipe(doctorID, requested);
+        boolean response = recipeService.createRecipe(doctorID, requested);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -96,7 +99,7 @@ public class DoctorController {
 
     @PutMapping(path = "/DeclineRecipe/{recipeID}")
     public ResponseEntity<?> DeclineRecipe(@PathVariable("recipeID") Integer recipeID){
-        boolean done = userService.DeclineRecipe(recipeID);
+        boolean done = recipeService.DeclineRecipe(recipeID);
         if(done){
             return new ResponseEntity<>(HttpStatus.OK);
         }

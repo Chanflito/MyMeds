@@ -13,6 +13,6 @@ public interface PatientRepository extends JpaRepository<Patient,Integer> {
     Patient findByMailIgnoreCase(String mail);
     Patient findByPassword(String password);
     @Query("SELECT d FROM Patient p JOIN p.doctors d WHERE p.id = ?1")
-    List<Doctor> findByDoctors(Integer patientID);
+    List<Doctor> findDoctors(Integer patientID);
 
 }
