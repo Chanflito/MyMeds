@@ -78,7 +78,7 @@ public class RecipeService {
         return false;
     }
 
-    //-------------------------BUSQUEDAS-------------------------------------------------------------------
+    //-------------------------BUSQUEDAS--------------------------------------------------------------------------------
     public List<recipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
         List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
         List<recipeDTO> answer = new ArrayList<>();
@@ -115,7 +115,19 @@ public class RecipeService {
         return answer;
     }
 
-    //--------------------------RECHAZAR--------------------------------------------------------------------
+    public List<recipeDTO> findeAllRecipesForPharmacy(Integer pharmacyID){
+        List<Recipe> recipes = recipeRepository.findAllForPharmacy(pharmacyID);
+        List<recipeDTO> answer = new ArrayList<>();
+        for(Recipe r : recipes){
+            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
+                    patientRepository.findById(r.getPatientID()).get().getUsername(),
+                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+        }
+        return answer;
+    }
+
+    //--------------------------RECHAZAR--------------------------------------------------------------------------------
     public boolean DeclineRecipe(Integer recipeID){
         Optional<Recipe> r = recipeRepository.findById(recipeID);
         if(!r.isPresent()){return false;}
@@ -125,7 +137,7 @@ public class RecipeService {
         return true;
     }
 
-    //---------------------------------DTO-----------------------------------------------------------------
+    //---------------------------------DTO------------------------------------------------------------------------------
 
     public record recipeDTO(String docSignature, String drugName, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,

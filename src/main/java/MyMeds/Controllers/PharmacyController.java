@@ -60,6 +60,9 @@ public class PharmacyController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @GetMapping(path="/viewRecipeHistory/{id}")
+    public ResponseEntity<?> viewRecipeHistory(@RequestParam("id") Integer pharmacyID){
+        return new ResponseEntity<>(recipeService.findeAllRecipesForPharmacy(pharmacyID), HttpStatus.OK);
+    }
 
 }
