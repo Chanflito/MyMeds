@@ -16,19 +16,21 @@ public class FilterConfig {
         filter.addUrlPatterns("/doctor/getDoctors","/doctor/getDoctorById/*",
                 "/doctor/listpatients/*",
                 "/doctor/addpatient/*","/doctor/getPatientById/*",
-                "/doctor/tokenDoctor","/doctor/viewRequests/*",
-                "/doctor/deleteRequest/*",
-                "/doctor/createRecipe/*","/doctor/sendRecipe"
+                "/doctor/tokenDoctor","/doctor/viewRecipes/*","/doctor/AproveRecipe/*",
+                "/doctor/DeclineRecipe/*","/doctor/getAllPharmacys"
         );
         //Patient Urls
         filter.addUrlPatterns("/patient/getPatients","/patient/getPatientById/*",
-                "/patient/*/addInsurance",
-                "/patient/*/makeRequest",
-                "/patient/viewRequests/*"
+                "/patient/*/addInsurance","/patient/deletePatientById/*",
+                "/patient/changePatientPassword/*","/patient/*/addInsurance",
+                "/patient/*/makeRecipe","/patient/tokenPatient","/patient/viewDoctors/*",
+                "/patient/viewRecipes/*"
                 );
         //Pharmacy Urls
         filter.addUrlPatterns("/pharmacy/getPharmacy",
-                "/pharmacy/getPharmacyById/*");
+                "/pharmacy/getPharmacyById/*","/pharmacy/tokenPharmacy",
+                "/pharmacy/getRecipesByStatus/*");
+
         return filter;
     }
 }

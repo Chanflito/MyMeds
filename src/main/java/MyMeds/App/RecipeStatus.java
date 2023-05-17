@@ -5,6 +5,5 @@ public enum RecipeStatus {
     //Declined ==> Rechazada
     //In_progress ==> en proceso
     //Dispensed ==> Entregada
-    //Filled ==> En farmacia
     APPROVED,DECLINED,IN_PROGRESS,DISPENSED
 }

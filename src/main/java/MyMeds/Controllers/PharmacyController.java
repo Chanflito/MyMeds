@@ -54,4 +54,12 @@ public class PharmacyController {
         List<RecipeService.recipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
+
+    @GetMapping(path="/tokenPharmacy")
+    public ResponseEntity<?> checkToken(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
 }
