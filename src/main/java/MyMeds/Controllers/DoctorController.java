@@ -101,4 +101,5 @@ public class DoctorController {
     public ResponseEntity<?> getPharmacys(){
         return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
     }
+
 }
