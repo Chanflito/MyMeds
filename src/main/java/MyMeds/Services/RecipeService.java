@@ -80,37 +80,42 @@ public class RecipeService {
 
     //-------------------------BUSQUEDAS--------------------------------------------------------------------------------
     public List<recipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
+        //Ve todos los tipos de receta menos las Dispensed
         List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
         List<recipeDTO> answer = new ArrayList<>();
-        for(Recipe r : recipes){
-            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
-                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
-                    patientRepository.findById(r.getPatientID()).get().getUsername(),
-                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+        boolean hasPharmacy = true;
+        if(status.equals(RecipeStatus.IN_PROGRESS) || status.equals(RecipeStatus.DECLINED)){hasPharmacy = false;}
+        //casos donde no tiene farmacia asignada
+        if(hasPharmacy) {
+            for (Recipe r : recipes) {
+                answer.add(constructRecipeDTO(r, r.getPharmacyID()));
+            }
+            return answer;
         }
-        return answer;
+        else{
+            for (Recipe r : recipes) {
+                answer.add(constructRecipeDTO(r, null));
+            }
+            return answer;
+        }
     }
 
+    //Status solo puede ser In_Progress
     public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID){
         List<Recipe> recipes = recipeRepository.findByStatusAndIDDoctor(status, doctorID);
         List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
-                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
-                    patientRepository.findById(r.getPatientID()).get().getUsername(),
-                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+            answer.add(constructRecipeDTO(r, null));
         }
         return answer;
     }
 
     public List<recipeDTO> findeByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID){
+        //Los estados son approved o dispensed, siempre tienen una farmacia
         List<Recipe> recipes = recipeRepository.findByStatusAndPharmacyID(status, pharmacyID);
         List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
-                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
-                    patientRepository.findById(r.getPatientID()).get().getUsername(),
-                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+            answer.add(constructRecipeDTO(r, pharmacyID));
         }
         return answer;
     }
@@ -119,10 +124,7 @@ public class RecipeService {
         List<Recipe> recipes = recipeRepository.findAllForPharmacy(pharmacyID);
         List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
-                    r.getPatientID(),r.getDoctorID(),r.getPharmacyID(),
-                    patientRepository.findById(r.getPatientID()).get().getUsername(),
-                    doctorRepository.findById(r.getDoctorID()).get().getUsername()));
+            answer.add(constructRecipeDTO(r, pharmacyID));
         }
         return answer;
     }
@@ -141,8 +143,23 @@ public class RecipeService {
 
     public record recipeDTO(String docSignature, String drugName, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,
-                            String patientName, String doctorName){}
+                            String patientName, String doctorName, String pharmacyName){}
     /**Pharmacy mark recipe**/
+
+    public recipeDTO constructRecipeDTO(Recipe r, Integer pID){
+        if(pID == null){
+            return new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+                    r.getPatientID(),r.getDoctorID(),null,
+                    patientRepository.findById(r.getPatientID()).get().getUsername(),
+                    doctorRepository.findById(r.getDoctorID()).get().getUsername(),
+                    null);
+        }
+        return new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+                r.getPatientID(),r.getDoctorID(), pID,
+                patientRepository.findById(r.getPatientID()).get().getUsername(),
+                doctorRepository.findById(r.getDoctorID()).get().getUsername(),
+                pharmacyRepository.findById(pID).get().getUsername());
+    }
 
     public boolean markRecipe(Integer recipeID){
         Optional<Recipe> recipe = recipeRepository.findById(recipeID);
