@@ -129,6 +129,6 @@ public class RecipeService {
 
     public record recipeDTO(String docSignature, String drugName, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,
-                            String patientUsername, String doctorUsername){}
+                            String patientName, String doctorName){}
 
 }

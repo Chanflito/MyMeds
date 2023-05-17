@@ -19,4 +19,7 @@ public interface RecipeRepository extends JpaRepository<Recipe,Integer>{
 
     @Query("SELECT r FROM Recipe r WHERE r.status = :status AND r.pharmacyID = :pharmacyID")
     List<Recipe> findByStatusAndPharmacyID(@Param("status") RecipeStatus status, @Param("pharmacyID") Integer pharmacyID);
+
+    @Query("SELECT r FROM Recipe r WHERE  r.pharmacyID = :pharmacyID")
+    List<Recipe> findAllForPharmacy(@Param("pharmacyID") Integer pharmacyID);
 }
