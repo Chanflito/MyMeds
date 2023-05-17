@@ -25,4 +25,5 @@ public class DoctorForPatient {
     public void setDoctorUsername(String doctorUsername) {
         this.doctorUsername = doctorUsername;
     }
+
 }
