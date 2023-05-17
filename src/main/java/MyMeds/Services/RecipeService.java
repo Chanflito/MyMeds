@@ -142,5 +142,15 @@ public class RecipeService {
     public record recipeDTO(String docSignature, String drugName, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,
                             String patientName, String doctorName){}
+    /**Pharmacy mark recipe**/
 
+    public boolean markRecipe(Integer recipeID){
+        Optional<Recipe> recipe = recipeRepository.findById(recipeID);
+        if (recipe.isPresent()) {
+            recipe.ifPresent(r -> r.setStatus(RecipeStatus.DISPENSED));
+            recipeRepository.save(recipe.get());
+            return true;
+        }
+        return false;
+    }
 }
