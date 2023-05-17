@@ -61,10 +61,12 @@ public class PharmacyController {
     }
 
     @GetMapping(path="/viewRecipeHistory/{id}")
-    public ResponseEntity<?> viewRecipeHistory(@RequestParam("id") Integer pharmacyID){
+    public ResponseEntity<?> viewRecipeHistory(@PathVariable("id") Integer pharmacyID){
         return new ResponseEntity<>(recipeService.findeAllRecipesForPharmacy(pharmacyID), HttpStatus.OK);
     }
 
-
-
+    @PutMapping(path="/markRecipe/{id}")
+    public ResponseEntity<?> markRecipe(@PathVariable("id")Integer recipeID){
+        return new ResponseEntity<>(recipeService.markRecipe(recipeID), HttpStatus.OK);
+    }
 }
