@@ -29,7 +29,9 @@ public class FilterConfig {
         //Pharmacy Urls
         filter.addUrlPatterns("/pharmacy/getPharmacy",
                 "/pharmacy/getPharmacyById/*","/pharmacy/tokenPharmacy",
-                "/pharmacy/getRecipesByStatus/*");
+                "/pharmacy/getRecipesByStatus/*",
+                "/pharmacy/viewRecipeHistory/*",
+                "/pharmacy/markRecipe/*");
 
         return filter;
     }
