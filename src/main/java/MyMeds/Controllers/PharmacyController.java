@@ -69,4 +69,5 @@ public class PharmacyController {
     public ResponseEntity<?> markRecipe(@PathVariable("id")Integer recipeID){
         return new ResponseEntity<>(recipeService.markRecipe(recipeID), HttpStatus.OK);
     }
+ markitos main
 }
