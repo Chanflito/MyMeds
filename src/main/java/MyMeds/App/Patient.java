@@ -26,7 +26,9 @@ class Patient extends User {
     @JsonIgnore
     private List<Recipe> recipes;
 
-
+    @OneToMany(mappedBy = "patientDrug")
+    @JsonIgnore
+    private List<Drug> drugList;
 
     public Patient(){}
 
@@ -68,16 +70,17 @@ class Patient extends User {
         doctors.remove(d);
     }
 
+    public List<Drug> getDrugList() {
+        return drugList;
+    }
+
+    public void setDrugList(List<Drug> drugList) {
+        this.drugList = drugList;
+    }
 
     @Override
     public UserType getUserType() {
         return userType;
     }
 
-    //METHODS
-    //Patient gives the simpliest information to app
-
-    public void Pay(){
-        //Pays for its drugs
-    }
 }

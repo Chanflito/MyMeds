@@ -3,6 +3,8 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 import static MyMeds.App.RecipeStatus.*;
 
 @Entity
@@ -36,6 +38,9 @@ public class Recipe {
     @JoinTable(name = "pharmacy_recipe")
     @JsonIgnore
     private Pharmacy pharmacy;
+
+    @OneToMany(mappedBy = "recipe")
+    private List<Drug> drugList;
 
     @JoinColumn
     private RecipeStatus status = IN_PROGRESS;
@@ -127,5 +132,13 @@ public class Recipe {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public List<Drug> getDrugList() {
+        return drugList;
+    }
+
+    public void setDrugList(List<Drug> drugList) {
+        this.drugList = drugList;
     }
 }

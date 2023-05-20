@@ -23,6 +23,7 @@ public class UserService {
     @Autowired
     RecipeRepository recipeRepository;
 
+
     //------------------------------------ENTITY-GETTERS------------------------------------------------------------
     public List<Doctor> getDoctors(){
         return doctorRepository.findAll();
@@ -240,10 +241,5 @@ public class UserService {
     public boolean findPatientByID(Integer id){
         return patientRepository.findById(id).isPresent();
     }
-
-
-
-
-
 
 }
