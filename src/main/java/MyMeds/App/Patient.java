@@ -26,9 +26,6 @@ class Patient extends User {
     @JsonIgnore
     private List<Recipe> recipes;
 
-    @OneToMany(mappedBy = "patientDrug")
-    @JsonIgnore
-    private List<Drug> drugList;
 
     public Patient(){}
 
@@ -68,14 +65,6 @@ class Patient extends User {
     public void addDoctor(Doctor d){if(!doctors.contains(d)){doctors.add(d);}}
     public void removeDoctor(Doctor d){
         doctors.remove(d);
-    }
-
-    public List<Drug> getDrugList() {
-        return drugList;
-    }
-
-    public void setDrugList(List<Drug> drugList) {
-        this.drugList = drugList;
     }
 
     @Override

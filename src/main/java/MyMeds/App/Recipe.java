@@ -39,8 +39,6 @@ public class Recipe {
     @JsonIgnore
     private Pharmacy pharmacy;
 
-    @OneToMany(mappedBy = "recipe")
-    private List<Drug> drugList;
 
     @JoinColumn
     private RecipeStatus status = IN_PROGRESS;
@@ -134,11 +132,4 @@ public class Recipe {
         this.patient = patient;
     }
 
-    public List<Drug> getDrugList() {
-        return drugList;
-    }
-
-    public void setDrugList(List<Drug> drugList) {
-        this.drugList = drugList;
-    }
 }
