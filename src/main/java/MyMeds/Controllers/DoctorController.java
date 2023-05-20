@@ -4,6 +4,7 @@ import MyMeds.App.*;
 
 import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class DoctorController {
     RecipeService recipeService;
     @Autowired//Instancia Spring el servicio.
     UserService userService;
+
+    @Autowired
+    private DrugService drugService;
     @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
     public ResponseEntity<?> getDoctors() {
         return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
@@ -102,4 +106,15 @@ public class DoctorController {
         return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
     }
 
+    @PostMapping(path="/addDrugsForPatient/{doctorID}")
+    public ResponseEntity<?> addDrugsForPatient(@PathVariable("doctorID") Integer doctorID,
+                                                @RequestBody DrugService.DrugDto drugDto, @RequestParam("patientID") Integer patientID){
+        boolean done= drugService.addDrugToPatient(patientID,doctorID,drugDto);
+        if (done){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
