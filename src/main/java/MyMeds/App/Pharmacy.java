@@ -2,6 +2,7 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,9 @@ public class Pharmacy extends User{
     @JsonIgnore
     private List<Recipe> recipes;
 
+    @OneToMany(mappedBy = "pharmacy",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    private List<DrugPrice> prices=new ArrayList<>();
     @Transient
     private final UserType userType=UserType.PHARMACY;
     public Pharmacy(){}
@@ -74,4 +78,13 @@ public class Pharmacy extends User{
 
     public void addRecipe(Recipe rep){if(!recipes.contains(rep)){recipes.add(rep);}}
     public void removeRecipe(Recipe rep){if(recipes.contains(rep)){recipes.remove(rep);}}
+
+    public List<DrugPrice> getPrices() {
+        return prices;
+    }
+
+    public void setPrices(List<DrugPrice> prices) {
+        this.prices = prices;
+    }
+
 }
