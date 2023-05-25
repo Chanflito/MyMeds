@@ -3,6 +3,8 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 
 @Entity
 public class Drug {
@@ -18,20 +20,16 @@ public class Drug {
     @Column
     private String dosageForm;
 
-    @Column
-    private Integer stock;
-
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "drug",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
-    private Pharmacy pharmacy;
+    private List<StockPharmacy> stockPharmacyList;
     public Drug() {
     }
 
-    public Drug(String brandName, String strength,String dosageForm,Integer stock) {
+    public Drug(String brandName, String strength,String dosageForm) {
         this.brandName = brandName;
         this.strength = strength;
         this.dosageForm=dosageForm;
-        this.stock=stock;
     }
 
     public String getBrandName() {
@@ -58,19 +56,16 @@ public class Drug {
         this.dosageForm = dosageForm;
     }
 
-    public Integer getStock() {
-        return stock;
+
+    public List<StockPharmacy> getStockPharmacyList() {
+        return stockPharmacyList;
     }
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setStockPharmacyList(List<StockPharmacy> stockPharmacyList) {
+        this.stockPharmacyList = stockPharmacyList;
     }
 
-    public Pharmacy getPharmacy() {
-        return pharmacy;
-    }
-
-    public void setPharmacy(Pharmacy pharmacy) {
-        this.pharmacy = pharmacy;
+    public Integer getId() {
+        return id;
     }
 }

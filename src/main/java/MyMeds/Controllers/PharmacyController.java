@@ -1,8 +1,11 @@
 package MyMeds.Controllers;
 
+import MyMeds.App.Drug;
 import MyMeds.App.Pharmacy;
 import MyMeds.App.RecipeStatus;
+import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Repositorys.DrugRepository;
 import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
@@ -75,8 +78,8 @@ public class PharmacyController {
         return new ResponseEntity<>(recipeService.markRecipe(recipeID), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/getAllDrugs/")
-    public ResponseEntity<?> getAllDrugs() {
+    @GetMapping(path = "/getAllDrugsFromFDA")
+    public ResponseEntity<?> getAllDrugsFromFda() {
         List<String> drugList = drugService.getAllDrugsFromFDA();
         if (drugList != null) {
             return new ResponseEntity<>(drugList, HttpStatus.OK);
@@ -98,13 +101,47 @@ public class PharmacyController {
         }
     }
 
-    @PostMapping(path="/addDrugToPharmacy/{id}")
-    public ResponseEntity<?> addDrugToPharmacy(@PathVariable("id") Integer pharmacyID,
+    @PostMapping(path="/addDrugToPharmacyAndMyMeds/{id}")//Agrega la droga al stock de farmacia y a myMeds.
+    public ResponseEntity<?> addDrugToPharmacyAndMyMeds(@PathVariable("id") Integer pharmacyID,
                                                @RequestBody DrugService.pharmacyDrugDTO drugDTO){
-        boolean response= drugService.addDrugToPharmacy(pharmacyID, drugDTO);
+        boolean response= drugService.addDrugToPharmacyAndMyMeds(pharmacyID, drugDTO);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @GetMapping(path="/getAllDrugsFromMyMeds")
+    public ResponseEntity<?> getAllDrugsFromMeds(){
+        return new ResponseEntity<>(drugService.getAllDrugsFromMyMeds(),HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/addDrugToPharmacy/{id}") //Agregamos droga existente en el sistema de MyMeds a una farmacia y le asignamos su stock.
+    public ResponseEntity<?> addDrugToPharmacy(@PathVariable("id")Integer pharmacyID,
+                                               @RequestParam("drugID") Integer drugID,@RequestParam("stock") Integer stock){
+        boolean response= drugService.addDrugToPharmacy(pharmacyID, drugID, stock);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(path = "/getAllDrugsFromPharmacy/{id}")
+    public ResponseEntity<?>getAllDrugsFromPharmacy(@PathVariable("id") Integer pharmacyID){
+        List<DrugStockDTO> drugStockDTOS=drugService.getAllDrugsByPharmacyID(pharmacyID);
+        if (drugStockDTOS.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(drugStockDTOS,HttpStatus.OK);
+    }
+
+    @PutMapping(path="/setStockForDrugOfPharmacy/{id}")
+    public ResponseEntity<?> setStock(@PathVariable("id")Integer pharmacyID,
+                                      @RequestParam("stock") Integer stock,@RequestParam("drugID") Integer drugID){
+        boolean response= drugService.setDrugStockByPharmacyID(pharmacyID, stock, drugID);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

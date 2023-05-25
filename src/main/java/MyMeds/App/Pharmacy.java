@@ -16,8 +16,9 @@ public class Pharmacy extends User{
     @Transient
     private final UserType userType=UserType.PHARMACY;
 
-    @OneToMany(mappedBy = "pharmacy")
-    private List<Drug> drugs;
+    @OneToMany(mappedBy = "pharmacy",cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    private List<StockPharmacy> stockPharmacyList;
     public Pharmacy(){}
 
 
@@ -80,4 +81,11 @@ public class Pharmacy extends User{
     public void addRecipe(Recipe rep){if(!recipes.contains(rep)){recipes.add(rep);}}
     public void removeRecipe(Recipe rep){if(recipes.contains(rep)){recipes.remove(rep);}}
 
+    public List<StockPharmacy> getStockPharmacyList() {
+        return stockPharmacyList;
+    }
+
+    public void setStockPharmacyList(List<StockPharmacy> stockPharmacyList) {
+        this.stockPharmacyList = stockPharmacyList;
+    }
 }
