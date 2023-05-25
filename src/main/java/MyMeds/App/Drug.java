@@ -3,8 +3,6 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Drug {
@@ -13,55 +11,66 @@ public class Drug {
     private Integer id;
 
     @Column
-    private String drugName;
+    private String brandName;
     @Column
-    private String drugDose;
-    @ManyToMany(mappedBy = "drugList")
-    private List<Admin> admins=new ArrayList<>();
+    private String strength;
 
-    @OneToMany(mappedBy = "drug",cascade = CascadeType.ALL,orphanRemoval = true)
+    @Column
+    private String dosageForm;
+
+    @Column
+    private Integer stock;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JsonIgnore
-    private List<DrugPrice> prices=new ArrayList<>();
-
-
+    private Pharmacy pharmacy;
     public Drug() {
     }
 
-    public Drug(String drugName, String drugDose) {
-        this.drugName = drugName;
-        this.drugDose = drugDose;
+    public Drug(String brandName, String strength,String dosageForm,Integer stock) {
+        this.brandName = brandName;
+        this.strength = strength;
+        this.dosageForm=dosageForm;
+        this.stock=stock;
     }
 
-    public String getDrugName() {
-        return drugName;
+    public String getBrandName() {
+        return brandName;
     }
 
-    public void setDrugName(String drugName) {
-        this.drugName = drugName;
+    public void setBrandName(String brandName) {
+        this.brandName = brandName;
     }
 
-    public String getDrugDose() {
-        return drugDose;
+    public String getStrength() {
+        return strength;
     }
 
-    public void setDrugDose(String drugDose) {
-        this.drugDose = drugDose;
+    public void setStrength(String strength) {
+        this.strength = strength;
     }
 
-
-    public List<Admin> getAdmins() {
-        return admins;
+    public String getDosageForm() {
+        return dosageForm;
     }
 
-    public void setAdmins(List<Admin> admins) {
-        this.admins = admins;
+    public void setDosageForm(String dosageForm) {
+        this.dosageForm = dosageForm;
     }
 
-    public List<DrugPrice> getPrices() {
-        return prices;
+    public Integer getStock() {
+        return stock;
     }
 
-    public void setPrices(List<DrugPrice> prices) {
-        this.prices = prices;
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Pharmacy getPharmacy() {
+        return pharmacy;
+    }
+
+    public void setPharmacy(Pharmacy pharmacy) {
+        this.pharmacy = pharmacy;
     }
 }
