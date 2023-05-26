@@ -144,8 +144,13 @@ public class RecipeService {
     }
 
     public boolean Exists(Integer recipeID){
-        if(recipeRepository.findById(recipeID).isPresent()){
-            return true;
+        Optional<Recipe> r = recipeRepository.findById(recipeID);
+        if(r.isPresent()){
+            if(r.get().getStatus().equals(RecipeStatus.APPROVED)){
+                return true;
+            }
+            return false;
+
         }
         return false;
     }
