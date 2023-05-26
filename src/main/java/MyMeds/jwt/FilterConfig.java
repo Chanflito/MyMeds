@@ -25,13 +25,14 @@ public class FilterConfig {
                 "/patient/changePatientPassword/*","/patient/*/addInsurance",
                 "/patient/*/makeRecipe","/patient/tokenPatient","/patient/viewDoctors/*",
                 "/patient/viewRecipes/*"
-                );
+        );
         //Pharmacy Urls
         filter.addUrlPatterns("/pharmacy/getPharmacy",
                 "/pharmacy/getPharmacyById/*","/pharmacy/tokenPharmacy",
                 "/pharmacy/getRecipesByStatus/*",
                 "/pharmacy/viewRecipeHistory/*",
                 "/pharmacy/markRecipe/*");
+
 
         return filter;
     }
