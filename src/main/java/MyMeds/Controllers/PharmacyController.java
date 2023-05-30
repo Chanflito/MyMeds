@@ -70,9 +70,10 @@ public class PharmacyController {
         return new ResponseEntity<>(recipeService.markRecipe(recipeID), HttpStatus.OK);
     }
 
-    @GetMapping(path="/verifyByQr/{recipeID}")
-    public ResponseEntity<?> verifyByQr(@RequestParam("recipeID") Integer recipeID){
-        if(recipeService.Exists(recipeID)){
+    @GetMapping(path="/verifyByQr/{scanResult}")
+    public ResponseEntity<?> verifyByQr(@PathVariable("scanResult") String scanResult){
+        System.out.println(Integer.valueOf(scanResult));
+        if(recipeService.Exists(Integer.valueOf(scanResult))){
             return new ResponseEntity<>(true, HttpStatus.FOUND);
         }
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
