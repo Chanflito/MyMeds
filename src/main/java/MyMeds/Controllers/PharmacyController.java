@@ -137,11 +137,20 @@ public class PharmacyController {
 
     @PutMapping(path="/setStockForDrugOfPharmacy/{id}")
     public ResponseEntity<?> setStock(@PathVariable("id")Integer pharmacyID,
-                                      @RequestParam("stock") Integer stock,@RequestParam("drugID") Integer drugID){
-        boolean response= drugService.setDrugStockByPharmacyID(pharmacyID, stock, drugID);
-        if (response){
+                                      @RequestParam("stock") Integer stock,@RequestParam("drugID") Integer drugID) {
+        boolean response = drugService.setDrugStockByPharmacyID(pharmacyID, stock, drugID);
+        if (response) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    @GetMapping(path="/verifyByQr/{scanResult}")
+    public ResponseEntity<?> verifyByQr(@PathVariable("scanResult") String scanResult){
+        System.out.println(Integer.valueOf(scanResult));
+        if(recipeService.Exists(Integer.valueOf(scanResult))){
+            return new ResponseEntity<>(true, HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+
     }
 }

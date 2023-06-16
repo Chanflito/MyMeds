@@ -7,9 +7,18 @@ import MyMeds.Repositorys.DoctorRepository;
 import MyMeds.Repositorys.PatientRepository;
 import MyMeds.Repositorys.PharmacyRepository;
 import MyMeds.Repositorys.RecipeRepository;
+import MyMeds.email.EmailServiceImpl;
+import com.google.zxing.WriterException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +33,8 @@ public class RecipeService {
     PharmacyRepository pharmacyRepository;
     @Autowired
     RecipeRepository recipeRepository;
-
+    @Autowired
+    EmailServiceImpl emailService;
 
     public boolean addRecipe(Integer patientId,Integer docId, String drugName) {
         Optional<Doctor> doc_entity = doctorRepository.findById(docId);
@@ -41,6 +51,7 @@ public class RecipeService {
                 Recipe r = new Recipe();
                 r.setDoctorID(docId);
                 r.setPatientID(patientId);
+                r.setPatient(p);
                 r.setDrugName(drugName);
                 r.setDoctor(doc);
                 doc.addRecipe(r);
@@ -51,7 +62,7 @@ public class RecipeService {
         }
     }
 
-    public boolean createRecipe(Integer doctorID, ApprovedRecipeData dto){
+    public boolean createRecipe(Integer doctorID, ApprovedRecipeData dto) throws IOException, WriterException, MessagingException {
         Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
         if (doctorFound.isPresent()){
             if(dto.getDocSignature()==null){
@@ -69,6 +80,9 @@ public class RecipeService {
             r.setStatus(RecipeStatus.APPROVED);
 
             p.addRecipe(r);
+
+            sendQR(r.getRecipeID(), r.getPatient().getMail());
+
 
             recipeRepository.save(r);
             doctorRepository.save(doctorFound.get());
@@ -129,6 +143,18 @@ public class RecipeService {
         return answer;
     }
 
+    public boolean Exists(Integer recipeID){
+        Optional<Recipe> r = recipeRepository.findById(recipeID);
+        if(r.isPresent()){
+            if(r.get().getStatus().equals(RecipeStatus.APPROVED)){
+                return true;
+            }
+            return false;
+
+        }
+        return false;
+    }
+
     //--------------------------RECHAZAR--------------------------------------------------------------------------------
     public boolean DeclineRecipe(Integer recipeID){
         Optional<Recipe> r = recipeRepository.findById(recipeID);
@@ -137,6 +163,14 @@ public class RecipeService {
         recipe.setStatus(RecipeStatus.DECLINED);
         recipeRepository.save(recipe);
         return true;
+    }
+    //-----------------------------------MAIL---------------------------------------------------------------------------
+
+    public void sendQR(Integer recipeID, String patientMail) throws IOException, WriterException, MessagingException {
+        QRcode.genereteQRForRecipe(recipeID);
+        File QR = new File("c:/Users/marco/Projects/MyMeds/src/main/resources/RecipesQrs/"+recipeID);
+        emailService.sendMail(QR, patientMail, "Show this Qr to" +
+                "your pharmacy (;", recipeID);
     }
 
     //---------------------------------DTO------------------------------------------------------------------------------

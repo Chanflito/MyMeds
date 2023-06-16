@@ -22,4 +22,5 @@ public interface RecipeRepository extends JpaRepository<Recipe,Integer>{
 
     @Query("SELECT r FROM Recipe r WHERE  r.pharmacyID = :pharmacyID")
     List<Recipe> findAllForPharmacy(@Param("pharmacyID") Integer pharmacyID);
+
 }
