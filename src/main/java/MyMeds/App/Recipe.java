@@ -3,6 +3,7 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static MyMeds.App.RecipeStatus.*;
@@ -51,7 +52,9 @@ public class Recipe {
     }
 
 
-    public Recipe(){}
+    public Recipe(){
+        this.drugs=new ArrayList<>();
+    }
 //GETTERS AND SETTERS
 
     public RecipeStatus getStatus() {

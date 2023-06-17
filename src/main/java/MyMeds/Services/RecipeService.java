@@ -1,21 +1,15 @@
 package MyMeds.Services;
 
 import MyMeds.App.*;
-import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Dto.CreateRecipeResponse;
 import MyMeds.Dto.DrugDTO;
-import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Exceptions.UserNotFoundException;
 import MyMeds.Repositorys.*;
 import MyMeds.email.EmailServiceImpl;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,6 +80,7 @@ public class RecipeService {
                 }
                 else{
                     Recipe recipe=new Recipe();
+                    recipe.setPatient(patient_entity.get());
                     recipe.setStatus(RecipeStatus.IN_PROGRESS);
                     recipe.setDoctorID(docId);
                     recipe.setPatientID(patientId);
@@ -96,36 +91,28 @@ public class RecipeService {
                         if (drug.isPresent()){
                             recipe.getDrugs().add(drug.get());
                             drug.get().getRecipes().add(recipe);
+                            recipeRepository.save(recipe);
                             drugRepository.save(drug.get());
                         }
                     }
-                    recipeRepository.save(recipe);
                     return new CreateRecipeResponse(true,null);
                 }
             }
         }
     }
 
-    public boolean createRecipe(Integer doctorID, ApprovedRecipeData dto) throws IOException, WriterException, MessagingException {
+    public boolean createRecipe(Integer doctorID, Integer recipeID) throws IOException, WriterException, MessagingException {
         Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
         if (doctorFound.isPresent()){
-            if(dto.getDocSignature()==null){
-                return false;
-            }
-            Optional<Recipe> recipe = recipeRepository.findById(dto.getRecipeID());
-            Optional<Pharmacy> pharmacy = pharmacyRepository.findById(dto.getPharmacyID());
+            Optional<Recipe> recipe = recipeRepository.findById(recipeID);
+            Optional<Pharmacy> pharmacy = pharmacyRepository.findById(recipe.get().getPharmacyID());
             if(!recipe.isPresent() || !pharmacy.isPresent()){return false;}
             Recipe r = recipe.get();
             Pharmacy p = pharmacy.get();
-
-            r.setPharmacyID(dto.getPharmacyID());
             r.setPharmacy(pharmacy.get());
             r.setStatus(RecipeStatus.APPROVED);
-
             p.addRecipe(r);
-
             sendQR(r.getRecipeID(), r.getPatient().getMail());
-
             recipeRepository.save(r);
             doctorRepository.save(doctorFound.get());
             pharmacyRepository.save(p);
@@ -209,10 +196,11 @@ public class RecipeService {
     //-----------------------------------MAIL---------------------------------------------------------------------------
 
     public void sendQR(Integer recipeID, String patientMail) throws IOException, WriterException, MessagingException {
-        QRcode.genereteQRForRecipe(recipeID);
-        File QR = new File("c:/Users/marco/Projects/MyMeds/src/main/resources/RecipesQrs/"+recipeID);
-        emailService.sendMail(QR, patientMail, "Show this Qr to" +
-                "your pharmacy (;", recipeID);
+        QRcode.generateQRForRecipe(recipeID);
+        String projectDir = System.getProperty("user.dir");
+        String qrDir = projectDir + "/src/main/resources/RecipesQrs/";
+        File QR = new File(qrDir, recipeID.toString());
+        emailService.sendMail(QR, patientMail, "Show this Qr to your pharmacy (;", recipeID);
     }
 
     //---------------------------------DTO------------------------------------------------------------------------------

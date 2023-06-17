@@ -2,7 +2,6 @@ package MyMeds.Controllers;
 
 import MyMeds.App.*;
 
-import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
@@ -87,8 +86,8 @@ public class DoctorController {
     }
 
     @PutMapping(path = "/AproveRecipe/{id}")
-    public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestBody ApprovedRecipeData requested) throws IOException, WriterException, MessagingException {
-        boolean response = recipeService.createRecipe(doctorID, requested);
+    public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestParam("recipeID")Integer recipeID) throws IOException, WriterException, MessagingException {
+        boolean response = recipeService.createRecipe(doctorID, recipeID);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -109,6 +108,10 @@ public class DoctorController {
         return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
     }
 
+    @GetMapping(path = "/filterDrugByBrandName/{brandName}")
+    public ResponseEntity<?> filterDrugsInMyMeds(@PathVariable("brandName")String brandName){
+        return new ResponseEntity<>(drugService.filterDrugsByBrandNameOnMyMeds(brandName),HttpStatus.OK);
+    }
     @PutMapping(path="/addDrugToPatient/{doctorID}")
     public ResponseEntity<?> addDrugToPatient(@PathVariable("doctorID") Integer doctorID,@RequestParam("patientID") Integer patientID,
                                               @RequestParam("drugID") Integer drugID){
@@ -124,6 +127,15 @@ public class DoctorController {
         boolean response= drugService.removeDrugForPatient(patientID,drugID,doctorID);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
+    @GetMapping(path = "/getPatientDrugs/{doctorID}")
+    public ResponseEntity<?> getDrugsForPatientAsDoctor(@PathVariable("doctorID") Integer doctorID,@RequestParam("patientID") Integer patientID){
+        List<DrugService.myMedsDrugDTO> patientDrugs= drugService.getPatientDrugsAsDoctor(doctorID,patientID);
+        if (!patientDrugs.isEmpty()){
+            return new ResponseEntity<>(patientDrugs,HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }

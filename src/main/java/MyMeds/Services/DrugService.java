@@ -1,6 +1,7 @@
 package MyMeds.Services;
 
 import MyMeds.App.*;
+import MyMeds.Dto.DrugDTO;
 import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Repositorys.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -132,6 +133,10 @@ public class DrugService {
         }
         return myMedsDrugDTOS;
     }
+
+    public List<DrugDTO> filterDrugsByBrandNameOnMyMeds(String brandName){
+        return drugRepository.filterByBrandNameDrug(brandName);
+    }
     //Agregamos la droga ya existente en myMeds al stock de la farmacia (la droga no la tenia la farmacia en si)
     public boolean addDrugToPharmacy(Integer pharmacyID,Integer drugID,Integer stock){
         Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
@@ -220,4 +225,16 @@ public class DrugService {
         return myMedsDrugDTOS;
     }
 
+    public List<myMedsDrugDTO> getPatientDrugsAsDoctor(Integer doctorID,Integer patientID){
+        Optional<Patient> patient=patientRepository.findById(patientID);
+        Optional<Doctor> doctor=doctorRepository.findById(doctorID);
+        List<myMedsDrugDTO> myMedsDrugDTOS=new ArrayList<>();
+        if (patient.isPresent() && doctor.isPresent() && doctor.get().HasPatient(patient.get())){
+            List<Drug>drugs=patient.get().getDrugList();
+            for (Drug d: drugs) {
+                myMedsDrugDTOS.add(new myMedsDrugDTO(d.getId(),d.getBrandName(),d.getStrength(),d.getDosageForm()));
+            }
+        }
+        return myMedsDrugDTOS;
+    }
 }

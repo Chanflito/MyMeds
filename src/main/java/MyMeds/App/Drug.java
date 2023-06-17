@@ -3,6 +3,7 @@ package MyMeds.App;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,6 +35,7 @@ public class Drug {
     @JsonIgnore
     private List<Patient> patients;
     public Drug() {
+        this.recipes=new ArrayList<>();
     }
 
     public Drug(String brandName, String strength,String dosageForm) {

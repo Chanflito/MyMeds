@@ -9,19 +9,23 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
 public class QRcode {
 
-    public static void genereteQRForRecipe(Integer recipeID) throws WriterException, IOException {
-        String save = "C:\\Users\\marco\\Projects\\MyMeds\\src\\main\\resources\\RecipesQrs\\" +
-                    String.valueOf(recipeID);
+    public static void generateQRForRecipe(Integer recipeID) throws WriterException, IOException {
+        String projectDir = System.getProperty("user.dir");
+        String qrDir = projectDir + "/src/main/resources/RecipesQrs/";
+        String filename = qrDir + recipeID.toString();
+
         QRCodeWriter writer = new QRCodeWriter();
-        BitMatrix matrix = writer.encode(String.valueOf(recipeID),
-                                        BarcodeFormat.QR_CODE, 400, 400);
-        MatrixToImageWriter.writeToPath(matrix, "jpg", Paths.get(save));
+        BitMatrix matrix = writer.encode(recipeID.toString(), BarcodeFormat.QR_CODE, 400, 400);
+        Path qrPath = Paths.get(filename);
+        MatrixToImageWriter.writeToPath(matrix, "jpg", qrPath);
     }
+
 
 }
 
