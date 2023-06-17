@@ -26,6 +26,8 @@ class Patient extends User {
     @JsonIgnore
     private List<Recipe> recipes;
 
+    @ManyToMany(mappedBy = "patients")
+    private List<Drug> drugList;
 
     public Patient(){}
 
@@ -72,4 +74,23 @@ class Patient extends User {
         return userType;
     }
 
+    public void setDoctors(List<Doctor> doctors) {
+        this.doctors = doctors;
+    }
+
+    public List<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
+    }
+
+    public List<Drug> getDrugList() {
+        return drugList;
+    }
+
+    public void setDrugList(List<Drug> drugList) {
+        this.drugList = drugList;
+    }
 }

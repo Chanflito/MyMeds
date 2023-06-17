@@ -4,6 +4,7 @@ import MyMeds.App.*;
 
 import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import com.google.zxing.WriterException;
@@ -26,6 +27,8 @@ public class DoctorController {
     @Autowired//Instancia Spring el servicio.
     UserService userService;
 
+    @Autowired
+    DrugService drugService;
     @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
     public ResponseEntity<?> getDoctors() {
         return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
@@ -106,4 +109,22 @@ public class DoctorController {
         return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
     }
 
+    @PutMapping(path="/addDrugToPatient/{doctorID}")
+    public ResponseEntity<?> addDrugToPatient(@PathVariable("doctorID") Integer doctorID,@RequestParam("patientID") Integer patientID,
+                                              @RequestParam("drugID") Integer drugID){
+        boolean response= drugService.addDrugToPatient(patientID,drugID,doctorID);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+    @DeleteMapping(path = "/removePatientDrug/{doctorID}")
+    public ResponseEntity<?> removePatientDrug(@PathVariable("doctorID") Integer doctorID,@RequestParam("patientID") Integer patientID,
+                                               @RequestParam("drugID")Integer drugID){
+        boolean response= drugService.removeDrugForPatient(patientID,drugID,doctorID);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
 }

@@ -7,8 +7,6 @@ import java.util.*;
 
 @Entity
 public class Doctor extends User{
-    @Column(unique = true)
-    private String signature;
     public Doctor(){}
 
     @Column(unique = true, nullable = false)
@@ -41,9 +39,6 @@ public class Doctor extends User{
     public String getPassword(){
         return super.getPassword();
     }
-    public String getSignature(){
-        return signature;
-    }
 
     public List<Recipe> getRecipes() {
         return recipes;
@@ -61,7 +56,6 @@ public class Doctor extends User{
     public void setMail(String mail) {
         this.mail = mail;
     }
-    public void setSignature(String signature) {this.signature = signature;}
     public void addPatient(Optional<Patient> p){if(!patients.contains(p.get())){patients.add(p.get());}}
     public void removePatient(Optional<Patient> p){
         if(patients.contains(p.get())){patients.remove(p.get());}
@@ -78,10 +72,7 @@ public class Doctor extends User{
     //METHODS
     
     public boolean HasPatient(Patient p){
-        if(patients.contains(p)){
-            return true;
-        }
-        return false;
+        return patients.contains(p);
     }
 
     public Boolean searchPatient(Integer patientId){

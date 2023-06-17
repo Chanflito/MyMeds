@@ -2,11 +2,11 @@ package MyMeds.Services;
 
 import MyMeds.App.*;
 import MyMeds.Dto.ApprovedRecipeData;
+import MyMeds.Dto.CreateRecipeResponse;
+import MyMeds.Dto.DrugDTO;
+import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Exceptions.UserNotFoundException;
-import MyMeds.Repositorys.DoctorRepository;
-import MyMeds.Repositorys.PatientRepository;
-import MyMeds.Repositorys.PharmacyRepository;
-import MyMeds.Repositorys.RecipeRepository;
+import MyMeds.Repositorys.*;
 import MyMeds.email.EmailServiceImpl;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -35,8 +37,19 @@ public class RecipeService {
     RecipeRepository recipeRepository;
     @Autowired
     EmailServiceImpl emailService;
+    @Autowired
+    DrugService drugService;
+    @Autowired
+    StockPharmacyRepository stockPharmacyRepository;
 
-    public boolean addRecipe(Integer patientId,Integer docId, String drugName) {
+    @Autowired
+    DrugRepository drugRepository;
+
+    public CreateRecipeResponse addRecipe(Integer patientId, Integer docId, List<Integer>drugsID, Integer pharmacyID) {
+        if (drugsID.isEmpty()){
+            return new CreateRecipeResponse(false,null);
+        }
+        List<MyMeds.Dto.DrugDTO> drugsStock=stockPharmacyRepository.findDrugsWithStock(drugsID,pharmacyID);
         Optional<Doctor> doc_entity = doctorRepository.findById(docId);
         Optional<Patient> patient_entity = patientRepository.findById(patientId);
         if (!doc_entity.isPresent() && !patient_entity.isPresent()) {
@@ -44,20 +57,51 @@ public class RecipeService {
         } else {
             Doctor doc = doc_entity.get();
             Patient p = patient_entity.get();
-            if (!doc.HasPatient(p)) {
-                return false;
+            if (!doc.HasPatient(p )) {
+                return new CreateRecipeResponse(false,null);
             } else {
-                //crea una receta en estado IN_PROCESS
-                Recipe r = new Recipe();
-                r.setDoctorID(docId);
-                r.setPatientID(patientId);
-                r.setPatient(p);
-                r.setDrugName(drugName);
-                r.setDoctor(doc);
-                doc.addRecipe(r);
-                recipeRepository.save(r);
-                doctorRepository.save(doc);
-                return true;
+                if (drugsStock.isEmpty() ){
+                    List<MyMeds.Dto.DrugDTO> drugsWithoutStockInPharmacy=new ArrayList<>();
+                    for(Integer d:drugsID){
+                        Optional<Drug> drug=drugRepository.findById(d);
+                        drugsWithoutStockInPharmacy.add(new DrugDTO(drug.get().getId(),drug.get().getBrandName(),drug.get().getDosageForm(),drug.get().getStrength()));
+
+                    }
+                    return new CreateRecipeResponse(false,drugsWithoutStockInPharmacy);
+                }
+                if (drugsStock.size() < drugsID.size()) {
+                    List<MyMeds.Dto.DrugDTO> drugsWithNoStock = drugsID.stream()
+                            .filter(drugId -> drugsStock.stream().noneMatch(dto -> dto.getDrugID().equals(drugId)))
+                            .map(drugId -> {
+                                Optional<Drug> drugOptional = drugRepository.findById(drugId);
+                                if (drugOptional.isPresent()) {
+                                    Drug drug = drugOptional.get();
+                                    return new DrugDTO(drug.getId(), drug.getBrandName(), drug.getDosageForm(), drug.getStrength());
+                                }
+                                return null;
+                            })
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+                    return new CreateRecipeResponse(false,drugsWithNoStock);
+                }
+                else{
+                    Recipe recipe=new Recipe();
+                    recipe.setStatus(RecipeStatus.IN_PROGRESS);
+                    recipe.setDoctorID(docId);
+                    recipe.setPatientID(patientId);
+                    recipe.setDoctor(doc);
+                    recipe.setPharmacyID(pharmacyID);
+                    for (Integer d: drugsID) {
+                        Optional<Drug> drug=drugRepository.findById(d);
+                        if (drug.isPresent()){
+                            recipe.getDrugs().add(drug.get());
+                            drug.get().getRecipes().add(recipe);
+                            drugRepository.save(drug.get());
+                        }
+                    }
+                    recipeRepository.save(recipe);
+                    return new CreateRecipeResponse(true,null);
+                }
             }
         }
     }
@@ -74,7 +118,6 @@ public class RecipeService {
             Recipe r = recipe.get();
             Pharmacy p = pharmacy.get();
 
-            r.setDocSignature(dto.getDocSignature());
             r.setPharmacyID(dto.getPharmacyID());
             r.setPharmacy(pharmacy.get());
             r.setStatus(RecipeStatus.APPROVED);
@@ -82,7 +125,6 @@ public class RecipeService {
             p.addRecipe(r);
 
             sendQR(r.getRecipeID(), r.getPatient().getMail());
-
 
             recipeRepository.save(r);
             doctorRepository.save(doctorFound.get());
@@ -175,20 +217,20 @@ public class RecipeService {
 
     //---------------------------------DTO------------------------------------------------------------------------------
 
-    public record recipeDTO(String docSignature, String drugName, Integer recipeID,
+    public record recipeDTO(List<Drug> drug, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,
                             String patientName, String doctorName, String pharmacyName){}
     /**Pharmacy mark recipe**/
 
     public recipeDTO constructRecipeDTO(Recipe r, Integer pID){
         if(pID == null){
-            return new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+            return new recipeDTO(r.getDrugs(),r.getRecipeID(),
                     r.getPatientID(),r.getDoctorID(),null,
                     patientRepository.findById(r.getPatientID()).get().getUsername(),
                     doctorRepository.findById(r.getDoctorID()).get().getUsername(),
                     null);
         }
-        return new recipeDTO(r.getDocSignature(), r.getDrugName(),r.getRecipeID(),
+        return new recipeDTO(r.getDrugs(),r.getRecipeID(),
                 r.getPatientID(),r.getDoctorID(), pID,
                 patientRepository.findById(r.getPatientID()).get().getUsername(),
                 doctorRepository.findById(r.getDoctorID()).get().getUsername(),

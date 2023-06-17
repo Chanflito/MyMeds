@@ -9,11 +9,6 @@ import static MyMeds.App.RecipeStatus.*;
 
 @Entity
 public class Recipe {
-    @Column
-    private String docSignature;
-    @Column
-    private String drugName;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer recipeID;
@@ -39,6 +34,10 @@ public class Recipe {
     @JsonIgnore
     private Pharmacy pharmacy;
 
+    @ManyToMany(mappedBy ="recipes")
+    @JsonIgnore
+    private List<Drug> drugs;
+
 
     @JoinColumn
     private RecipeStatus status = IN_PROGRESS;
@@ -51,11 +50,6 @@ public class Recipe {
         this.pharmacy = pharmacy;
     }
 
-    public Recipe(String docSignature, String drugName, Integer pharmacyID){
-        this.docSignature = docSignature;
-        this.drugName = drugName;
-        this.pharmacyID = pharmacyID;
-    }
 
     public Recipe(){}
 //GETTERS AND SETTERS
@@ -67,13 +61,7 @@ public class Recipe {
         this.status = status;
     }
 
-    public String getDocSignature() {
-        return docSignature;
-    }
 
-    public void setDocSignature(String docSignature) {
-        this.docSignature = docSignature;
-    }
 
     public Doctor getDoctor() {
         return doctor;
@@ -83,13 +71,6 @@ public class Recipe {
         this.doctor = doctor;
     }
 
-    public String getDrugName() {
-        return drugName;
-    }
-
-    public void setDrugName(String drugName) {
-        this.drugName = drugName;
-    }
 
     public Integer getPharmacyID() {
         return pharmacyID;
@@ -132,4 +113,11 @@ public class Recipe {
         this.patient = patient;
     }
 
+    public List<Drug> getDrugs() {
+        return drugs;
+    }
+
+    public void setDrugs(List<Drug> drugs) {
+        this.drugs = drugs;
+    }
 }

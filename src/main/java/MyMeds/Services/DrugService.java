@@ -1,8 +1,6 @@
 package MyMeds.Services;
 
-import MyMeds.App.Drug;
-import MyMeds.App.Pharmacy;
-import MyMeds.App.StockPharmacy;
+import MyMeds.App.*;
 import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Repositorys.*;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,11 +34,15 @@ public class DrugService {
     @Autowired
     StockPharmacyRepository stockPharmacyRepository;
 
+    @Autowired
+    UserService userService;
+
     public record fdaDrugDTO(String brandName, String strength, String dosageForm){
     }
 
-
     public record pharmacyDrugDTO(String brandName,String strength,String dosageForm,Integer stock){}
+
+    public record myMedsDrugDTO(Integer drugID, String brandName,String strength,String dosageForm){}
 
     public List<String> getAllDrugsFromFDA(){
         String url = "https://api.fda.gov/drug/drugsfda.json?count=products.brand_name.exact&limit=999";
@@ -73,7 +76,8 @@ public class DrugService {
     }
     //Pendiente probar e implementar en el controller este metodo.
     public List<fdaDrugDTO> getDetailsFromBrandNameDrug(String brandName) throws IOException {
-        String url = "https://api.fda.gov/drug/drugsfda.json?search=products.brand_name:"+brandName+"&limit=25";
+        String b=brandName.replaceAll(" ", "-");
+        String url = "https://api.fda.gov/drug/drugsfda.json?search=products.brand_name:"+b+"&limit=25";
         ObjectMapper mapper=new ObjectMapper();
         JsonNode rootNode = mapper.readTree(new URL(url));
 
@@ -120,8 +124,13 @@ public class DrugService {
         return false;
     }
 
-    public List<Drug> getAllDrugsFromMyMeds(){
-        return drugRepository.findAll();
+    public List<myMedsDrugDTO> getAllDrugsFromMyMeds(){
+        List<Drug> drugs=drugRepository.findAll();
+        List<myMedsDrugDTO> myMedsDrugDTOS=new ArrayList<>();
+        for (Drug d: drugs) {
+            myMedsDrugDTOS.add(new myMedsDrugDTO(d.getId(),d.getBrandName(),d.getStrength(),d.getDosageForm()));
+        }
+        return myMedsDrugDTOS;
     }
     //Agregamos la droga ya existente en myMeds al stock de la farmacia (la droga no la tenia la farmacia en si)
     public boolean addDrugToPharmacy(Integer pharmacyID,Integer drugID,Integer stock){
@@ -161,4 +170,54 @@ public class DrugService {
         }
         return false;
     }
+
+    //Antes de esto, el medico deberia hacer una busqueda de la droga, es decir en getAllDrugsFromMyMeds
+    public boolean addDrugToPatient(Integer patientID,Integer drugID,Integer doctorID) {
+        List<UserService.patientDTO> patientDTOList = userService.getAllPatientsFromDoctor(doctorID);
+        Optional<Patient> patient = patientRepository.findById(patientID);
+        Optional<Drug> drug=drugRepository.findById(drugID);
+        if (patient.isPresent() &&  drug.isPresent()) {
+            for (UserService.patientDTO p : patientDTOList) {
+                if (Objects.equals(p.dni(), patientID )&& !patientRepository.patientContainsDrug(drugID,patientID)){
+                    patient.get().getDrugList().add(drug.get());
+                    drug.get().getPatients().add(patient.get());
+                    patientRepository.save(patient.get());
+                    drugRepository.save(drug.get());
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean removeDrugForPatient(Integer patientID,Integer drugID,Integer doctorID){
+        Optional<Patient> patient=patientRepository.findById(patientID);
+        Optional<Drug> drug=drugRepository.findById(drugID);
+        Optional<Doctor> doctor=doctorRepository.findById(doctorID);
+        if (patient.isPresent() && drug.isPresent() && doctor.isPresent()){
+            List<Drug> patientDrugs=patient.get().getDrugList();
+            if (patientRepository.patientContainsDrug(drugID,patientID) && doctor.get().HasPatient(patient.get())){
+                patientDrugs.remove(drug.get());
+                drug.get().getPatients().remove(patient.get());
+                patientRepository.save(patient.get());
+                drugRepository.save(drug.get());
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        return false;
+    }
+    public List<myMedsDrugDTO> getPatientDrugs(Integer patientID){
+        Optional<Patient> patient=patientRepository.findById(patientID);
+        List<myMedsDrugDTO> myMedsDrugDTOS=new ArrayList<>();
+        if (patient.isPresent()){
+            List<Drug>drugs=patient.get().getDrugList();
+            for (Drug d: drugs) {
+                myMedsDrugDTOS.add(new myMedsDrugDTO(d.getId(),d.getBrandName(),d.getStrength(),d.getDosageForm()));
+            }
+        }
+        return myMedsDrugDTOS;
+    }
+
 }

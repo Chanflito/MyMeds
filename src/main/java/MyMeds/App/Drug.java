@@ -23,6 +23,16 @@ public class Drug {
     @OneToMany(mappedBy = "drug",cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonIgnore
     private List<StockPharmacy> stockPharmacyList;
+    @ManyToMany
+    @JoinTable(name = "recipe_drug",joinColumns = @JoinColumn(name = "drug_id",referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(name = "recipe_id",referencedColumnName = "recipeID"))
+    private List<Recipe> recipes;
+
+    @ManyToMany
+    @JoinTable(name = "patient_drug",joinColumns = @JoinColumn(name="drug_id",referencedColumnName = "id"),
+                inverseJoinColumns = @JoinColumn(name = "patient_id",referencedColumnName = "id"))
+    @JsonIgnore
+    private List<Patient> patients;
     public Drug() {
     }
 
@@ -67,5 +77,21 @@ public class Drug {
 
     public Integer getId() {
         return id;
+    }
+
+    public List<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<Recipe> recipes) {
+        this.recipes = recipes;
+    }
+
+    public List<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(List<Patient> patients) {
+        this.patients = patients;
     }
 }

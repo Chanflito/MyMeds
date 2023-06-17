@@ -1,8 +1,10 @@
 package MyMeds.Controllers;
 
 import MyMeds.App.*;
+import MyMeds.Dto.CreateRecipeResponse;
 import MyMeds.Dto.InProcessRecipeData;
 import MyMeds.Exceptions.UserRegisteredException;
+import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class PatientController {
     RecipeService recipeService;
     @Autowired
     UserService userService;
+
+    @Autowired
+    DrugService drugService;
     @GetMapping("/getPatients")
     public ResponseEntity<?> getPatients(){
         return new ResponseEntity<>(userService.getPatients(), HttpStatus.FOUND);
@@ -59,14 +64,20 @@ public class PatientController {
     }
 
     @PutMapping("/{id}/makeRecipe")
-    public ResponseEntity<?> makeRequestForRecipeToDoctor(@PathVariable Integer id,@RequestBody InProcessRecipeData data){
+    public ResponseEntity<?> makeRequestForRecipeToDoctor(@PathVariable Integer id,@RequestBody List<Integer> drugsID,
+                                                          @RequestParam ("doctorID") Integer doctorID,@RequestParam("pharmacyID") Integer pharmacyID){
         //If isDone == false, doctor does not have a signature
-        boolean isDone = this.recipeService.addRecipe(id,data.getDocId(), data.getDrugName());
-        if (isDone){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }else{
+        CreateRecipeResponse response = this.recipeService.addRecipe(id,doctorID, drugsID,pharmacyID);
+        //Si el paciente no se encuentra en la lista del doctor, retorna un not_found.
+        if (!response.isSucess() && (response.getDrugDTOS()==null || response.getDrugDTOS().isEmpty())){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        //Si no contiene stock, se menciona que drogas no tienen stock.
+        if (!response.isSucess() && !response.getDrugDTOS().isEmpty()){
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+        //De lo contrario, retorna un 200.
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path="/tokenPatient")
@@ -89,5 +100,15 @@ public class PatientController {
     public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID, @RequestParam("status") RecipeStatus status){
         List<RecipeService.recipeDTO> recipies= recipeService.findByRecipeStatusPatient(status, patientID);
         return new ResponseEntity<>(recipies,HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping(path="/getAllPharmacys")
+    public ResponseEntity<?> getPharmacys(){
+        return new ResponseEntity<>(userService.getAllPharmacys(),HttpStatus.OK);
+    }
+
+    @GetMapping(path="/getPatientDrugs/{patientID}")
+    public ResponseEntity<?> getPatientDrugs(@PathVariable("patientID") Integer patientID){
+        return new ResponseEntity<>(drugService.getPatientDrugs(patientID),HttpStatus.OK);
     }
 }
