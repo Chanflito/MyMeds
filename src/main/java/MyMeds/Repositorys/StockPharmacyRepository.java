@@ -26,4 +26,6 @@ public interface StockPharmacyRepository  extends JpaRepository<StockPharmacy,In
             "WHERE p.drug.id IN (:drugsID) AND p.pharmacy.id = :pharmacyID AND p.stock > 0")
     List<MyMeds.Dto.DrugDTO> findDrugsWithStock(@Param("drugsID") List<Integer> drugIds, @Param("pharmacyID") Integer pharmacyID);
 
+    @Query("SELECT d.id FROM StockPharmacy d WHERE d.drug.brandName=:brandName AND d.drug.dosageForm=:dosageForm AND d.drug.strength=:strength AND d.pharmacy.id=:pharmacyID")
+    Integer getDrugInPharmacy(@Param("brandName") String brandName,@Param("dosageForm") String dosageForm,@Param("strength")String strength,@Param("pharmacyID")Integer pharmacyID);
 }

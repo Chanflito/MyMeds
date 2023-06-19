@@ -66,7 +66,6 @@ public class PatientController {
     @PutMapping("/{id}/makeRecipe")
     public ResponseEntity<?> makeRequestForRecipeToDoctor(@PathVariable Integer id,@RequestBody List<Integer> drugsID,
                                                           @RequestParam ("doctorID") Integer doctorID,@RequestParam("pharmacyID") Integer pharmacyID){
-        //If isDone == false, doctor does not have a signature
         CreateRecipeResponse response = this.recipeService.addRecipe(id,doctorID, drugsID,pharmacyID);
         //Si el paciente no se encuentra en la lista del doctor, retorna un not_found.
         if (!response.isSucess() && (response.getDrugDTOS()==null || response.getDrugDTOS().isEmpty())){

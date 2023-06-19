@@ -3,6 +3,7 @@ package MyMeds.Services;
 import MyMeds.App.*;
 import MyMeds.Dto.DrugDTO;
 import MyMeds.Dto.DrugStockDTO;
+import MyMeds.Exceptions.InvalidJsonException;
 import MyMeds.Repositorys.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -104,27 +105,41 @@ public class DrugService {
     }
     /**El drugDTO debe tener los mismos datos que los medicamentos buscados en openFDA, nada mas que le agregamos el stock
      * que deberia tener la farmacia de ese producto.*/
-    public boolean addDrugToPharmacyAndMyMeds(Integer pharmacyID,pharmacyDrugDTO drugDTO){
-        Optional<Pharmacy> pharmacy= pharmacyRepository.findById(pharmacyID);
+    public boolean addDrugToPharmacy(Integer pharmacyID,pharmacyDrugDTO drugDTO){
+        Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
+        if (drugDTO.dosageForm()==null || drugDTO.brandName()==null || drugDTO.strength()==null || drugDTO.stock()==null){
+            return false;
+        }
         if (pharmacy.isPresent()){
-            //Antes de subir la droga a la tabla de medicamentos global entre farmacias, necesito verificar que dicho medicamento no exista
-            boolean existsDrug=drugRepository.
-                    existsByBrandNameAndStrengthAndDosageForm(drugDTO.brandName(),drugDTO.dosageForm(), drugDTO.strength());
-            if (existsDrug){
+            Integer drugInMyMeds= drugRepository.getDrugByBrandNameAndDosageFormAndStrength(drugDTO.brandName(), drugDTO.dosageForm(), drugDTO.strength());
+            Integer drugInPharmacy=stockPharmacyRepository.getDrugInPharmacy(drugDTO.brandName(), drugDTO.dosageForm(), drugDTO.strength(), pharmacyID);
+            if (drugInPharmacy!=null && drugInMyMeds!=null){
                 return false;
             }
-            Drug drug=new Drug(drugDTO.brandName(), drugDTO.dosageForm(), drugDTO.strength());
-            StockPharmacy stockPharmacy=new StockPharmacy();
-            stockPharmacy.setPharmacy(pharmacy.get());
-            stockPharmacy.setDrug(drug);
-            drugRepository.save(drug);
-            pharmacyRepository.save(pharmacy.get());
-            stockPharmacyRepository.save(stockPharmacy);
-            return true;
+            if (drugInPharmacy==null && drugInMyMeds!=null){
+                Optional<Drug> drug=drugRepository.findById(drugInMyMeds);
+                StockPharmacy stockPharmacy=new StockPharmacy();
+                stockPharmacy.setPharmacy(pharmacy.get());
+                stockPharmacy.setDrug(drug.get());
+                stockPharmacy.setStock(drugDTO.stock());
+                drugRepository.save(drug.get());
+                pharmacyRepository.save(pharmacy.get());
+                stockPharmacyRepository.save(stockPharmacy);
+                return true;
+            }
+            if (drugInPharmacy==null){
+                Drug drug=new Drug(drugDTO.brandName(), drugDTO.strength(), drugDTO.dosageForm());
+                StockPharmacy stockPharmacy=new StockPharmacy();
+                stockPharmacy.setPharmacy(pharmacy.get());
+                stockPharmacy.setDrug(drug);
+                drugRepository.save(drug);
+                pharmacyRepository.save(pharmacy.get());
+                stockPharmacyRepository.save(stockPharmacy);
+                return true;
+            }
         }
         return false;
     }
-
     public List<myMedsDrugDTO> getAllDrugsFromMyMeds(){
         List<Drug> drugs=drugRepository.findAll();
         List<myMedsDrugDTO> myMedsDrugDTOS=new ArrayList<>();
@@ -138,22 +153,6 @@ public class DrugService {
         return drugRepository.filterByBrandNameDrug(brandName);
     }
     //Agregamos la droga ya existente en myMeds al stock de la farmacia (la droga no la tenia la farmacia en si)
-    public boolean addDrugToPharmacy(Integer pharmacyID,Integer drugID,Integer stock){
-        Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
-        Optional<Drug> drug=drugRepository.findById(drugID);
-        if (pharmacy.isPresent() && drug.isPresent()){
-            if (!stockPharmacyRepository.existsDrugByIDAndPharmacyID(drugID,pharmacyID)){
-                StockPharmacy stockPharmacy=new StockPharmacy();
-                stockPharmacy.setPharmacy(pharmacy.get());
-                stockPharmacy.setDrug(drug.get());
-                stockPharmacy.setStock(stock);
-                drugRepository.save(drug.get());
-                pharmacyRepository.save(pharmacy.get());
-                stockPharmacyRepository.save(stockPharmacy);
-                return true;
-            }
-        }
-        return false;}
 
     public List<DrugStockDTO> getAllDrugsByPharmacyID(Integer pharmacyID){
         Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
@@ -236,5 +235,45 @@ public class DrugService {
             }
         }
         return myMedsDrugDTOS;
+    }
+    public void loadMassiveStock(Integer pharmacyID,List<pharmacyDrugDTO> pharmacyDrugDTOS) throws InvalidJsonException {
+        Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
+        if (pharmacy.isPresent()){
+            for(pharmacyDrugDTO d: pharmacyDrugDTOS){
+                //En el dado caso de que alguno de los datos del json sean invalidos se interrumpe la carga del mismo.
+                if (d.dosageForm()==null || d.brandName()==null || d.strength()==null || d.stock()==null){
+                    throw new InvalidJsonException("Invalid JSON data.");
+                }
+                StockPharmacy stockPharmacy=new StockPharmacy();
+                stockPharmacy.setPharmacy(pharmacy.get());
+                Integer drugInMyMeds= drugRepository.getDrugByBrandNameAndDosageFormAndStrength(d.brandName(), d.dosageForm(), d.strength());
+                Integer drugInPharmacy=stockPharmacyRepository.getDrugInPharmacy(d.brandName(), d.dosageForm(), d.strength(), pharmacyID);
+                //Si la droga ya existe en MyMeds y en la farmacia, carga unicamente el valor del stock.
+                if (drugInPharmacy!=null && drugInMyMeds!=null){
+                    StockPharmacy stockToChange=stockPharmacyRepository.findById(drugInPharmacy).get();
+                    Optional<Drug> drug=drugRepository.findById(drugInMyMeds);
+                    stockToChange.setStock(d.stock());
+                    drugRepository.save(drug.get());
+                    stockPharmacyRepository.save(stockToChange);
+                    pharmacyRepository.save(pharmacy.get());
+                }
+                if (drugInPharmacy==null && drugInMyMeds!=null){
+                    Optional<Drug> drug=drugRepository.findById(drugInMyMeds);
+                    stockPharmacy.setStock(d.stock());
+                    stockPharmacy.setDrug(drug.get());
+                    drugRepository.save(drug.get());
+                    pharmacyRepository.save(pharmacy.get());
+                    stockPharmacyRepository.save(stockPharmacy);
+                }
+                if (drugInPharmacy==null){
+                    stockPharmacy.setStock(d.stock());
+                    Drug drug=new Drug(d.brandName(), d.strength(), d.dosageForm());;
+                    stockPharmacy.setDrug(drug);
+                    drugRepository.save(drug);
+                    pharmacyRepository.save(pharmacy.get());
+                    stockPharmacyRepository.save(stockPharmacy);
+                }
+            }
+        }
     }
 }

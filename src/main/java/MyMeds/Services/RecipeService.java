@@ -127,7 +127,7 @@ public class RecipeService {
         List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
         List<recipeDTO> answer = new ArrayList<>();
         boolean hasPharmacy = true;
-        if(status.equals(RecipeStatus.IN_PROGRESS) || status.equals(RecipeStatus.DECLINED)){hasPharmacy = false;}
+        if(status.equals(RecipeStatus.IN_PROGRESS) || status.equals(RecipeStatus.DECLINED)){hasPharmacy = true;}
         //casos donde no tiene farmacia asignada
         if(hasPharmacy) {
             for (Recipe r : recipes) {
@@ -148,7 +148,7 @@ public class RecipeService {
         List<Recipe> recipes = recipeRepository.findByStatusAndIDDoctor(status, doctorID);
         List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
-            answer.add(constructRecipeDTO(r, null));
+            answer.add(constructRecipeDTO(r, r.getPharmacyID()));
         }
         return answer;
     }
@@ -205,20 +205,24 @@ public class RecipeService {
 
     //---------------------------------DTO------------------------------------------------------------------------------
 
-    public record recipeDTO(List<Drug> drug, Integer recipeID,
+    public record recipeDTO(List<DrugDTO> drug, Integer recipeID,
                             Integer patientID, Integer doctorID, Integer pharmacyID,
                             String patientName, String doctorName, String pharmacyName){}
     /**Pharmacy mark recipe**/
 
     public recipeDTO constructRecipeDTO(Recipe r, Integer pID){
+        List<DrugDTO> drugDTOList=new ArrayList<>();
+        for (Drug d: r.getDrugs()) {
+            drugDTOList.add(new DrugDTO(d.getId(),d.getBrandName(),d.getDosageForm(),d.getStrength()));
+        }
         if(pID == null){
-            return new recipeDTO(r.getDrugs(),r.getRecipeID(),
+            return new recipeDTO(drugDTOList,r.getRecipeID(),
                     r.getPatientID(),r.getDoctorID(),null,
                     patientRepository.findById(r.getPatientID()).get().getUsername(),
                     doctorRepository.findById(r.getDoctorID()).get().getUsername(),
                     null);
         }
-        return new recipeDTO(r.getDrugs(),r.getRecipeID(),
+        return new recipeDTO(drugDTOList,r.getRecipeID(),
                 r.getPatientID(),r.getDoctorID(), pID,
                 patientRepository.findById(r.getPatientID()).get().getUsername(),
                 doctorRepository.findById(r.getDoctorID()).get().getUsername(),
@@ -229,6 +233,16 @@ public class RecipeService {
         Optional<Recipe> recipe = recipeRepository.findById(recipeID);
         if (recipe.isPresent()) {
             recipe.ifPresent(r -> r.setStatus(RecipeStatus.DISPENSED));
+            recipeRepository.save(recipe.get());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean rejectRecipeAsPharmacy(Integer recipeID){
+        Optional<Recipe> recipe = recipeRepository.findById(recipeID);
+        if (recipe.isPresent()) {
+            recipe.ifPresent(r -> r.setStatus(RecipeStatus.REJECTED));
             recipeRepository.save(recipe.get());
             return true;
         }
