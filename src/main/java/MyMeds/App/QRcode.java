@@ -6,7 +6,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,7 +24,5 @@ public class QRcode {
         Path qrPath = Paths.get(filename);
         MatrixToImageWriter.writeToPath(matrix, "jpg", qrPath);
     }
-
-
 }
 

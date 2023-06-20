@@ -28,4 +28,5 @@ public interface StockPharmacyRepository  extends JpaRepository<StockPharmacy,In
 
     @Query("SELECT d.id FROM StockPharmacy d WHERE d.drug.brandName=:brandName AND d.drug.dosageForm=:dosageForm AND d.drug.strength=:strength AND d.pharmacy.id=:pharmacyID")
     Integer getDrugInPharmacy(@Param("brandName") String brandName,@Param("dosageForm") String dosageForm,@Param("strength")String strength,@Param("pharmacyID")Integer pharmacyID);
+
 }

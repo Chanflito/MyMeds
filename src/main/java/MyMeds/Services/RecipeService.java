@@ -9,6 +9,8 @@ import MyMeds.email.EmailServiceImpl;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -54,6 +56,7 @@ public class RecipeService {
             if (!doc.HasPatient(p )) {
                 return new CreateRecipeResponse(false,null);
             } else {
+                //Si no contiene nada de stock de ninguna de las drogas seleccionadas, manda una lista de las drogas sin stock.
                 if (drugsStock.isEmpty() ){
                     List<MyMeds.Dto.DrugDTO> drugsWithoutStockInPharmacy=new ArrayList<>();
                     for(Integer d:drugsID){
@@ -63,6 +66,7 @@ public class RecipeService {
                     }
                     return new CreateRecipeResponse(false,drugsWithoutStockInPharmacy);
                 }
+                //Si por lo menos una hay stock, retorna las que no hay stock y no se crea la receta.
                 if (drugsStock.size() < drugsID.size()) {
                     List<MyMeds.Dto.DrugDTO> drugsWithNoStock = drugsID.stream()
                             .filter(drugId -> drugsStock.stream().noneMatch(dto -> dto.getDrugID().equals(drugId)))
@@ -144,10 +148,16 @@ public class RecipeService {
     }
 
     //Status solo puede ser In_Progress
-    public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID){
-        List<Recipe> recipes = recipeRepository.findByStatusAndIDDoctor(status, doctorID);
+    public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID, Pageable pageable){
+       Page<Recipe> recipePage;
+        if (status == null) {
+            recipePage = recipeRepository.findRecipesDoctorID(doctorID,pageable);
+        } else {
+            recipePage = recipeRepository.findByStatusAndIDDoctor(status, doctorID,pageable);
+        }
+
         List<recipeDTO> answer = new ArrayList<>();
-        for(Recipe r : recipes){
+        for (Recipe r : recipePage.getContent()) {
             answer.add(constructRecipeDTO(r, r.getPharmacyID()));
         }
         return answer;
@@ -229,14 +239,53 @@ public class RecipeService {
                 pharmacyRepository.findById(pID).get().getUsername());
     }
 
-    public boolean markRecipe(Integer recipeID){
+    public CreateRecipeResponse markRecipe(Integer recipeID,Integer pharmacyID){
         Optional<Recipe> recipe = recipeRepository.findById(recipeID);
-        if (recipe.isPresent()) {
+        Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
+        if (recipe.isPresent() && pharmacy.isPresent()) {
+            List<Drug> drugsList=recipe.get().getDrugs();
+            List<Integer> drugsID=new ArrayList<>();
+            for (Drug d: drugsList) {
+                drugsID.add(d.getId());
+            }
+            List<MyMeds.Dto.DrugDTO> drugsStock=stockPharmacyRepository.findDrugsWithStock(drugsID,pharmacyID);
+            //Sino contiene stock de ninguna de las drogas, manda una lista de las drogas sin stock.
+            if (drugsStock.isEmpty()){
+                List<MyMeds.Dto.DrugDTO> drugsWithoutStockInPharmacy=new ArrayList<>();
+                for(Integer d:drugsID){
+                    Optional<Drug> drug=drugRepository.findById(d);
+                    drugsWithoutStockInPharmacy.add(new DrugDTO(drug.get().getId(),drug.get().getBrandName(),drug.get().getDosageForm(),drug.get().getStrength()));
+                }
+                return new CreateRecipeResponse(false,drugsWithoutStockInPharmacy);}
+            //Si por lo menos una habia stock, manda una respuesta de las que no hay stock, no permitiendo asi de retirar la receta en la farmacia.
+            if (drugsStock.size() < drugsID.size()) {
+                List<MyMeds.Dto.DrugDTO> drugsWithNoStock = drugsID.stream()
+                        .filter(drugId -> drugsStock.stream().noneMatch(dto -> dto.getDrugID().equals(drugId)))
+                        .map(drugId -> {
+                            Optional<Drug> drugOptional = drugRepository.findById(drugId);
+                            if (drugOptional.isPresent()) {
+                                Drug drug = drugOptional.get();
+                                return new DrugDTO(drug.getId(), drug.getBrandName(), drug.getDosageForm(), drug.getStrength());
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                return new CreateRecipeResponse(false,drugsWithNoStock);};
+            //Si hay stock de todas las drogas, permite hacer dispensed en la receta.
+            for (DrugDTO d: drugsStock) {
+                Integer drugInPharmacy=stockPharmacyRepository.getDrugInPharmacy(d.getBrandName(), d.getDosageForm(), d.getStrength(), pharmacyID);
+                StockPharmacy stockPharmacy=stockPharmacyRepository.findById(drugInPharmacy).get();
+                Integer stock=stockPharmacy.getStock()-1;
+                stockPharmacy.setStock(stock);
+                stockPharmacyRepository.save(stockPharmacy);
+                pharmacyRepository.save(pharmacy.get());
+            }
             recipe.ifPresent(r -> r.setStatus(RecipeStatus.DISPENSED));
             recipeRepository.save(recipe.get());
-            return true;
-        }
-        return false;
+            return new CreateRecipeResponse(true,null);
+            }
+        return new CreateRecipeResponse(false,null);
     }
 
     public boolean rejectRecipeAsPharmacy(Integer recipeID){
@@ -248,4 +297,5 @@ public class RecipeService {
         }
         return false;
     }
+
 }

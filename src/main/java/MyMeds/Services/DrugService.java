@@ -298,4 +298,17 @@ public class DrugService {
             }
         }
     }
+    public boolean deleteDrugInPharmacy(Integer pharmacyID,Integer drugID){
+        Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
+        Optional<Drug> drug=drugRepository.findById(drugID);
+        if (drug.isPresent() && pharmacy.isPresent()){
+            StockPharmacy stockPharmacy= stockPharmacyRepository.getStockWithDrugIDAndPharmacyID(drugID,pharmacyID);
+            stockPharmacyRepository.delete(stockPharmacy);
+            stockPharmacyRepository.save(stockPharmacy);
+            drugRepository.save(drug.get());
+            pharmacyRepository.save(pharmacy.get());
+            return true;
+        }
+        return false;
+    }
 }

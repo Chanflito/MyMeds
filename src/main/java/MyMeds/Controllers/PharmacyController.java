@@ -1,12 +1,12 @@
 package MyMeds.Controllers;
 
-import MyMeds.App.Drug;
+
 import MyMeds.App.Pharmacy;
 import MyMeds.App.RecipeStatus;
+import MyMeds.Dto.CreateRecipeResponse;
 import MyMeds.Dto.DrugStockDTO;
 import MyMeds.Exceptions.InvalidJsonException;
 import MyMeds.Exceptions.UserRegisteredException;
-import MyMeds.Repositorys.DrugRepository;
 import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
@@ -57,9 +57,10 @@ public class PharmacyController {
             return founded;
         }
     }
-
+    //Modificar este metodo mañana, agregarle el paginado.
     @GetMapping(path = "/getRecipesByStatus/{id}")
-    public ResponseEntity<?> getRecipesByStatus(@PathVariable("id") Integer pharmacyID, @RequestParam("status") RecipeStatus status) {
+    public ResponseEntity<?> getRecipesByStatus(@PathVariable("id") Integer pharmacyID,
+                                                @RequestParam("status") RecipeStatus status) {
         List<RecipeService.recipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
@@ -75,12 +76,14 @@ public class PharmacyController {
     }
 
     @PutMapping(path = "/markRecipe/{id}")
-    public ResponseEntity<?> markRecipe(@PathVariable("id") Integer recipeID) {
-        boolean response= recipeService.markRecipe(recipeID);
-        if (response){
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> markRecipe(@PathVariable("id") Integer recipeID,@RequestParam("pharmacyID") Integer pharmacyID) {
+        CreateRecipeResponse response= recipeService.markRecipe(recipeID,pharmacyID);
+        //Si no contiene stock, se menciona que drogas no tienen stock.
+        if (!response.isSucess() && !response.getDrugDTOS().isEmpty()){
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+        //De lo contrario, retorna un 200.
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(path = "/rejectRecipe/{id}")
@@ -181,5 +184,15 @@ public class PharmacyController {
         } catch (InvalidJsonException e) {
             return new ResponseEntity<>("Invalid JSON data", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping(path="/deleteDrugStock/{pharmacyID}")
+    public ResponseEntity<?> deleteDrugFromStockPharmacy(@PathVariable("pharmacyID") Integer pharmacyID,
+                                                         @RequestParam("drugID") Integer drugID){
+        boolean response= drugService.deleteDrugInPharmacy(pharmacyID,drugID);
+        if (response){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -9,6 +9,9 @@ import MyMeds.Services.UserService;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,12 +82,15 @@ public class DoctorController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(path="/viewRecipes/{id}")
-    public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer doctorID, @RequestParam("status") RecipeStatus status){
-        List<RecipeService.recipeDTO> recipes = recipeService.findByRecipeStatusDoctor(status, doctorID);
+    @GetMapping(path = "/viewRecipes/{id}")
+    public ResponseEntity<?> viewRecipesByIndex(@PathVariable("id")Integer doctorID,
+                                                @RequestParam(value = "status",required = false) RecipeStatus status,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestParam(value = "size", defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusDoctor(status,doctorID,pageable);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
-
     @PutMapping(path = "/AproveRecipe/{id}")
     public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestParam("recipeID")Integer recipeID) throws IOException, WriterException, MessagingException {
         boolean response = recipeService.createRecipe(doctorID, recipeID);
