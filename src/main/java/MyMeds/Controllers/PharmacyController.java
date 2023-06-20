@@ -115,9 +115,22 @@ public class PharmacyController {
         }
     }
 
+    @GetMapping(path = "/getDrugNameFromFDA/{brandName}")
+    public ResponseEntity<?> getDrugName(@PathVariable("brandName")String brandName) throws IOException {
+        try {
+            List<String> fdaDrugDTOS = drugService.filterDrugInFDAByBrandName(brandName);
+            if (!fdaDrugDTOS.isEmpty()) {
+                return new ResponseEntity<>(fdaDrugDTOS, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+        } catch (IOException e) {
+            return new ResponseEntity<>("Brand name not found", HttpStatus.NOT_FOUND);
+        }
+    }
     @PostMapping(path="/addDrugToPharmacy/{id}")//Agrega la droga al stock de farmacia y a myMeds.
     public ResponseEntity<?> addDrugToPharmacyAndMyMeds(@PathVariable("id") Integer pharmacyID,
-                                               @RequestBody DrugService.pharmacyDrugDTO drugDTO){
+                                               @RequestBody DrugService.fdaDrugDTO drugDTO){
         boolean response= drugService.addDrugToPharmacy(pharmacyID, drugDTO);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);

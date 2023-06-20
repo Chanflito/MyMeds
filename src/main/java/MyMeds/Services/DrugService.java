@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,10 +77,30 @@ public class DrugService {
         }
         return drugList;
     }
-    //Pendiente probar e implementar en el controller este metodo.
+    public List<String> filterDrugInFDAByBrandName(String brandName) throws IOException {
+        String b=brandName.replaceAll(" ", "-");
+        String url = "https://api.fda.gov/drug/drugsfda.json?search=products.brand_name:"+b+"&limit=999";
+        ObjectMapper mapper=new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(new URL(url));
+
+        JsonNode resultsNode = rootNode.get("results");
+        List<String> fdaDrugDTOS = new ArrayList<>();
+
+        for (JsonNode resultNode : resultsNode) {
+            JsonNode activeIngredientsNode = resultNode.get("products").get(0).get("active_ingredients");
+
+            if (activeIngredientsNode != null && activeIngredientsNode.isArray() && activeIngredientsNode.size() > 0) {
+                String name =resultNode.get("products").get(0).get("brand_name").asText();
+                if (!fdaDrugDTOS.contains(name)){
+                    fdaDrugDTOS.add(name);
+                }
+            }
+        }
+        return fdaDrugDTOS;
+    }
     public List<fdaDrugDTO> getDetailsFromBrandNameDrug(String brandName) throws IOException {
         String b=brandName.replaceAll(" ", "-");
-        String url = "https://api.fda.gov/drug/drugsfda.json?search=products.brand_name:"+b+"&limit=25";
+        String url = "https://api.fda.gov/drug/drugsfda.json?search=products.brand_name:"+b+"&limit=999";
         ObjectMapper mapper=new ObjectMapper();
         JsonNode rootNode = mapper.readTree(new URL(url));
 
@@ -105,9 +126,9 @@ public class DrugService {
     }
     /**El drugDTO debe tener los mismos datos que los medicamentos buscados en openFDA, nada mas que le agregamos el stock
      * que deberia tener la farmacia de ese producto.*/
-    public boolean addDrugToPharmacy(Integer pharmacyID,pharmacyDrugDTO drugDTO){
+    public boolean addDrugToPharmacy(Integer pharmacyID,fdaDrugDTO drugDTO){
         Optional<Pharmacy> pharmacy=pharmacyRepository.findById(pharmacyID);
-        if (drugDTO.dosageForm()==null || drugDTO.brandName()==null || drugDTO.strength()==null || drugDTO.stock()==null){
+        if (drugDTO.dosageForm()==null || drugDTO.brandName()==null || drugDTO.strength()==null){
             return false;
         }
         if (pharmacy.isPresent()){
@@ -121,7 +142,7 @@ public class DrugService {
                 StockPharmacy stockPharmacy=new StockPharmacy();
                 stockPharmacy.setPharmacy(pharmacy.get());
                 stockPharmacy.setDrug(drug.get());
-                stockPharmacy.setStock(drugDTO.stock());
+                stockPharmacy.setStock(0);
                 drugRepository.save(drug.get());
                 pharmacyRepository.save(pharmacy.get());
                 stockPharmacyRepository.save(stockPharmacy);
@@ -132,6 +153,7 @@ public class DrugService {
                 StockPharmacy stockPharmacy=new StockPharmacy();
                 stockPharmacy.setPharmacy(pharmacy.get());
                 stockPharmacy.setDrug(drug);
+                stockPharmacy.setStock(0);
                 drugRepository.save(drug);
                 pharmacyRepository.save(pharmacy.get());
                 stockPharmacyRepository.save(stockPharmacy);
