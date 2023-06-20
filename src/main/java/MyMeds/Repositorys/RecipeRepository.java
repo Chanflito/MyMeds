@@ -28,10 +28,11 @@ public interface RecipeRepository extends JpaRepository<Recipe,Integer>{
     @Query("SELECT r FROM Recipe r WHERE r.doctorID=:doctorID")
     Page<Recipe> findRecipesDoctorID(@Param("doctorID") Integer doctorID, Pageable pageable);
 
-    @Query("SELECT r FROM Recipe r WHERE r.doctorID = :doctorID AND CAST(r.patient.id AS CHAR) LIKE CONCAT('%', CAST(:patientID AS CHAR))")
-    Page<Recipe> findRecipesByDoctorIDAndPatientID(@Param("doctorID") Integer doctorID,@Param("patientID") Integer patientID,Pageable pageable);
+    @Query("SELECT r FROM Recipe r WHERE r.doctorID = :doctorID AND CAST(r.patient.id AS STRING) LIKE CONCAT('%', CAST(:patientID AS STRING), '%')")
+    Page<Recipe> findRecipesByDoctorIDAndPatientID(@Param("doctorID") Integer doctorID, @Param("patientID") Integer patientID, Pageable pageable);
 
-    @Query("SELECT r FROM Recipe r WHERE r.doctorID=:doctorID AND CAST(r.patient.id AS CHAR) LIKE CONCAT('%',CAST(:patientID AS CHAR) ) AND r.status=:status")
+
+    @Query("SELECT r FROM Recipe r WHERE r.doctorID=:doctorID AND CAST(r.patient.id AS STRING) LIKE CONCAT('%',CAST(:patientID AS STRING),'%' ) AND r.status=:status")
     Page<Recipe> findRecipesByDoctorIDAndPatientIDAndStatus(@Param("doctorID")Integer doctorID,@Param("patientID")Integer patientID,
                                                             @Param("status")RecipeStatus status,Pageable pageable);
 
