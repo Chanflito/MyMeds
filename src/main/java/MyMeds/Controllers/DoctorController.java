@@ -86,9 +86,10 @@ public class DoctorController {
     public ResponseEntity<?> viewRecipesByIndex(@PathVariable("id")Integer doctorID,
                                                 @RequestParam(value = "status",required = false) RecipeStatus status,
                                                 @RequestParam(value = "page", defaultValue = "0") int page,
-                                                @RequestParam(value = "size", defaultValue = "10") int size){
+                                                @RequestParam(value = "size", defaultValue = "10") int size,@RequestParam(value = "patientID",required = false)
+                                                Integer patientID){
         Pageable pageable = PageRequest.of(page, size);
-        List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusDoctor(status,doctorID,pageable);
+        List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusDoctor(status,doctorID,pageable,patientID);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
     @PutMapping(path = "/AproveRecipe/{id}")

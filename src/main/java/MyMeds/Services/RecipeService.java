@@ -148,14 +148,21 @@ public class RecipeService {
     }
 
     //Status solo puede ser In_Progress
-    public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID, Pageable pageable){
-       Page<Recipe> recipePage;
+    public List<recipeDTO> findByRecipeStatusDoctor(RecipeStatus status, Integer doctorID, Pageable pageable, Integer patientID){
+        Page<Recipe> recipePage;
         if (status == null) {
-            recipePage = recipeRepository.findRecipesDoctorID(doctorID,pageable);
+            if (patientID == null) {
+                recipePage = recipeRepository.findRecipesDoctorID(doctorID, pageable);
+            } else {
+                recipePage = recipeRepository.findRecipesByDoctorIDAndPatientID(doctorID, patientID, pageable);
+            }
         } else {
-            recipePage = recipeRepository.findByStatusAndIDDoctor(status, doctorID,pageable);
+            if (patientID == null) {
+                recipePage = recipeRepository.findByStatusAndIDDoctor(status, doctorID, pageable);
+            } else {
+                recipePage = recipeRepository.findRecipesByDoctorIDAndPatientIDAndStatus(doctorID, patientID, status, pageable);
+            }
         }
-
         List<recipeDTO> answer = new ArrayList<>();
         for (Recipe r : recipePage.getContent()) {
             answer.add(constructRecipeDTO(r, r.getPharmacyID()));
