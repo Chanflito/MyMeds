@@ -210,7 +210,17 @@ public class RecipeService {
         String projectDir = System.getProperty("user.dir");
         String qrDir = projectDir + "/src/main/resources/RecipesQrs/";
         File QR = new File(qrDir, recipeID.toString());
-        emailService.sendMail(QR, patientMail, "Show this Qr to your pharmacy (;", recipeID);
+        Recipe r = recipeRepository.findById(recipeID).get();
+        Pharmacy p = pharmacyRepository.findById(r.getPharmacyID()).get();
+        List<Drug> drugs = r.getDrugs();
+        String Body = "Hello, \n\t Your recipe for:";
+        for(Drug drug : drugs){
+            Body = Body + "\n\t - med: " + drug.getBrandName() +
+                            " qty: " + drug.getStrength() +
+                            " form: " + drug.getDosageForm();
+        }
+        Body = Body + "\n Show this QR to your pharmacy: " + p.getUsername() + ": " + p.getPrimarykey();
+        emailService.sendMail(QR, patientMail, Body, recipeID);
     }
 
     //---------------------------------DTO------------------------------------------------------------------------------
