@@ -197,8 +197,8 @@ public class RecipeService {
     public int countByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID,Integer patientID,String doctorUsername){
         return recipeRepository.countRecipesPharmacyByStatusAndPatientIDAndDoctorUsername(status,pharmacyID,patientID,doctorUsername);
     }
-    public List<recipeDTO> findeAllRecipesForPharmacy(Integer pharmacyID){
-        List<Recipe> recipes = recipeRepository.findAllForPharmacy(pharmacyID);
+    public List<recipeDTO> findeAllRecipesForPharmacy(Integer pharmacyID,RecipeStatus status){
+        List<Recipe> recipes = recipeRepository.findAllForPharmacy(pharmacyID,status);
         List<recipeDTO> answer = new ArrayList<>();
         for(Recipe r : recipes){
             answer.add(constructRecipeDTO(r, pharmacyID));

@@ -34,8 +34,8 @@ public interface RecipeRepository extends JpaRepository<Recipe,Integer>{
 
     @Query("SELECT count(r) FROM Recipe r WHERE (:status IS NULL OR r.status = :status) AND r.pharmacyID=:pharmacyID AND (:patientID IS NULL OR CAST(r.patient.id AS STRING) LIKE CONCAT(CAST(:patientID AS STRING),'%')) AND (:username IS NULL OR LOWER(r.doctor.username) LIKE CONCAT(LOWER(:username),'%'))")
     Integer countRecipesPharmacyByStatusAndPatientIDAndDoctorUsername(@Param("status") RecipeStatus status, @Param("pharmacyID") Integer pharmacyID,@Param("patientID")Integer patientID,@Param("username") String doctorName);
-    @Query("SELECT r FROM Recipe r WHERE  r.pharmacyID = :pharmacyID")
-    List<Recipe> findAllForPharmacy(@Param("pharmacyID") Integer pharmacyID);
+    @Query("SELECT r FROM Recipe r WHERE  r.pharmacyID = :pharmacyID AND (:status IS NULL OR r.status = :status)")
+    List<Recipe> findAllForPharmacy(@Param("pharmacyID") Integer pharmacyID,@Param("status")RecipeStatus status);
     //Retorna las recetas en el caso que no me pasen como parametro el status.
     @Query("SELECT r FROM Recipe r WHERE r.doctorID=:doctorID")
     Page<Recipe> findRecipesDoctorID(@Param("doctorID") Integer doctorID, Pageable pageable);

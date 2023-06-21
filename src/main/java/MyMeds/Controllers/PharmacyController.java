@@ -81,8 +81,8 @@ public class PharmacyController {
     }
 
     @GetMapping(path = "/viewRecipeHistory/{id}")
-    public ResponseEntity<?> viewRecipeHistory(@PathVariable("id") Integer pharmacyID) {
-        return new ResponseEntity<>(recipeService.findeAllRecipesForPharmacy(pharmacyID), HttpStatus.OK);
+    public ResponseEntity<?> viewRecipeHistory(@PathVariable("id") Integer pharmacyID,@RequestParam("status")RecipeStatus status) {
+        return new ResponseEntity<>(recipeService.findeAllRecipesForPharmacy(pharmacyID,status), HttpStatus.OK);
     }
 
     @PutMapping(path = "/markRecipe/{id}")
