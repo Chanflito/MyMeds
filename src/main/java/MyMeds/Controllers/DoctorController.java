@@ -2,6 +2,7 @@ package MyMeds.Controllers;
 
 import MyMeds.App.*;
 
+import MyMeds.Dto.RecipePageDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
@@ -90,7 +91,10 @@ public class DoctorController {
                                                 Integer patientID){
         Pageable pageable = PageRequest.of(page, size);
         List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusDoctor(status,doctorID,pageable,patientID);
-        return new ResponseEntity<>(recipes, HttpStatus.OK);
+        int totalRecipes= recipeService.countByRecipeStatusDoctor(status, doctorID, patientID);
+        int totalPages = (int) Math.ceil((double) totalRecipes / size);
+        RecipePageDTO recipePageDTO=new RecipePageDTO(recipes,totalPages);
+        return new ResponseEntity<>(recipePageDTO, HttpStatus.OK);
     }
     @PutMapping(path = "/AproveRecipe/{id}")
     public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestParam("recipeID")Integer recipeID) throws IOException, WriterException, MessagingException {

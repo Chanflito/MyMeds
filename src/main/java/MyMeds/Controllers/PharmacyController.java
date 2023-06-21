@@ -5,6 +5,7 @@ import MyMeds.App.Pharmacy;
 import MyMeds.App.RecipeStatus;
 import MyMeds.Dto.CreateRecipeResponse;
 import MyMeds.Dto.DrugStockDTO;
+import MyMeds.Dto.RecipePageDTO;
 import MyMeds.Exceptions.InvalidJsonException;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.DrugService;
@@ -68,7 +69,10 @@ public class PharmacyController {
                                                 @RequestParam(value = "doctorUsername",required = false)String doctorUsername) {
         Pageable pageable = PageRequest.of(page, size);
         List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusPharmacy(status,pharmacyID,patientID,doctorUsername,pageable);
-        return new ResponseEntity<>(recipes, HttpStatus.OK);
+        int totalRecipes= recipeService.countByRecipeStatusPharmacy(status, pharmacyID,patientID,doctorUsername);
+        int totalPages = (int) Math.ceil((double) totalRecipes / size);
+        RecipePageDTO recipePageDTO=new RecipePageDTO(recipes,totalPages);
+        return new ResponseEntity<>(recipePageDTO, HttpStatus.OK);
     }
 
     @GetMapping(path = "/tokenPharmacy")

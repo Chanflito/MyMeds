@@ -170,7 +170,9 @@ public class RecipeService {
         return answer;
     }
 
-
+    public int countByRecipeStatusDoctor(RecipeStatus status,Integer doctorID,Integer patientID){
+        return recipeRepository.countRecipesByStatusAndPatientIDAndDoctorID(doctorID, patientID, status);
+    }
     public List<recipeDTO> findByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID, Integer patientID,String doctorUsername,Pageable pageable){
         //Los estados son approved o dispensed, siempre tienen una farmacia
         Page<Recipe> recipePage;
@@ -192,7 +194,9 @@ public class RecipeService {
         }
         return answer;
     }
-
+    public int countByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID,Integer patientID,String doctorUsername){
+        return recipeRepository.countRecipesPharmacyByStatusAndPatientIDAndDoctorUsername(status,pharmacyID,patientID,doctorUsername);
+    }
     public List<recipeDTO> findeAllRecipesForPharmacy(Integer pharmacyID){
         List<Recipe> recipes = recipeRepository.findAllForPharmacy(pharmacyID);
         List<recipeDTO> answer = new ArrayList<>();
