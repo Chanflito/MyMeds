@@ -11,6 +11,8 @@ import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,8 +62,12 @@ public class PharmacyController {
     //Modificar este metodo mañana, agregarle el paginado.
     @GetMapping(path = "/getRecipesByStatus/{id}")
     public ResponseEntity<?> getRecipesByStatus(@PathVariable("id") Integer pharmacyID,
-                                                @RequestParam("status") RecipeStatus status) {
-        List<RecipeService.recipeDTO> recipes = recipeService.findeByRecipeStatusPharmacy(status, pharmacyID);
+                                                @RequestParam(value = "status",required = false) RecipeStatus status,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestParam(value = "size", defaultValue = "10") int size,@RequestParam(value ="patientID",required = false)Integer patientID,
+                                                @RequestParam(value = "doctorUsername",required = false)String doctorUsername) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<RecipeService.recipeDTO> recipes=recipeService.findByRecipeStatusPharmacy(status,pharmacyID,patientID,doctorUsername,pageable);
         return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 

@@ -170,12 +170,25 @@ public class RecipeService {
         return answer;
     }
 
-    public List<recipeDTO> findeByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID){
+
+    public List<recipeDTO> findByRecipeStatusPharmacy(RecipeStatus status, Integer pharmacyID, Integer patientID,String doctorUsername,Pageable pageable){
         //Los estados son approved o dispensed, siempre tienen una farmacia
-        List<Recipe> recipes = recipeRepository.findByStatusAndPharmacyID(status, pharmacyID);
+        Page<Recipe> recipePage;
+        if (patientID==null && doctorUsername==null){
+            recipePage=recipeRepository.findByStatusAndPharmacyID(status,pharmacyID,pageable);
+        }
+        else if(patientID == null){
+            recipePage=recipeRepository.findByStatusAndPharmacyIDAndDoctorName(status,pharmacyID,doctorUsername,pageable);
+        }
+        else if (doctorUsername == null){
+            recipePage=recipeRepository.findByStatusAndPharmacyIDAndPatientID(status,pharmacyID,patientID,pageable);
+        }
+        else{
+            recipePage=recipeRepository.findByStatusAndPharmacyIDAndDoctorNameAndPatientID(status,pharmacyID,doctorUsername,pageable,patientID);
+        }
         List<recipeDTO> answer = new ArrayList<>();
-        for(Recipe r : recipes){
-            answer.add(constructRecipeDTO(r, pharmacyID));
+        for (Recipe r : recipePage.getContent()) {
+            answer.add(constructRecipeDTO(r, r.getPharmacyID()));
         }
         return answer;
     }
