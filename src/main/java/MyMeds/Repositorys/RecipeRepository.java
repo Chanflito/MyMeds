@@ -13,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface RecipeRepository extends JpaRepository<Recipe,Integer>{
+
+    Recipe findByRecipeID(Integer recipeID);
+
     @Query("SELECT r FROM Recipe r WHERE r.status = :status AND r.patientID = :patientID" )
     List<Recipe> findByStatusAndID(@Param("status") RecipeStatus status,@Param("patientID") Integer patientID);
 
