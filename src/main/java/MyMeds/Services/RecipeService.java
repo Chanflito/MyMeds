@@ -212,14 +212,16 @@ public class RecipeService {
         File QR = new File(qrDir, recipeID.toString());
         Recipe r = recipeRepository.findById(recipeID).get();
         Pharmacy p = pharmacyRepository.findById(r.getPharmacyID()).get();
+        Patient patient = patientRepository.findById(r.getPatientID()).get();
         List<Drug> drugs = r.getDrugs();
-        String Body = "Hello, \n\t Your recipe for:";
+        String Body = "Hello ," + patient.getUsername()+ "." + "\n\t Your recipe for:\n";
         for(Drug drug : drugs){
-            Body = Body + "\n\t - med: " + drug.getBrandName() +
-                            " qty: " + drug.getStrength() +
-                            " form: " + drug.getDosageForm();
+            Body = Body + "\n\t  Med: " + drug.getBrandName() +
+                          "\n\t  Strength: " + drug.getStrength() +
+                          "\n\t  Dosage: " + drug.getDosageForm()+
+                            "\n";
         }
-        Body = Body + "\n Show this QR to your pharmacy: " + p.getUsername() + ": " + p.getPrimarykey();
+        Body = Body + "\n Show this QR at pharmacy: " + "\n\t "+ p.getUsername() + ": " + p.getPrimarykey();
         emailService.sendMail(QR, patientMail, Body, recipeID);
     }
 
