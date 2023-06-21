@@ -13,24 +13,11 @@ public class FilterConfig {
         FilterRegistrationBean<JwtFilter> filter= new FilterRegistrationBean<>();
         filter.setFilter(new JwtFilter());
         //Doctor Urls
-        filter.addUrlPatterns("/doctor/getDoctors","/doctor/getDoctorById/*",
-                "/doctor/listpatients/*",
-                "/doctor/addpatient/*","/doctor/getPatientById/*",
-                "/doctor/tokenDoctor","/doctor/viewRecipes/*","/doctor/AproveRecipe/*",
-                "/doctor/DeclineRecipe/*","/doctor/getAllPharmacys"
-        );
+        filter.addUrlPatterns("/doctor/*");
         //Patient Urls
-        filter.addUrlPatterns("/patient/getPatients","/patient/getPatientById/*",
-                "/patient/*/addInsurance","/patient/deletePatientById/*",
-                "/patient/changePatientPassword/*","/patient/*/addInsurance",
-                "/patient/*/makeRecipe","/patient/tokenPatient","/patient/viewDoctors/*"
-        );
+        filter.addUrlPatterns("/patient/*");
         //Pharmacy Urls
-        filter.addUrlPatterns("/pharmacy/getPharmacy",
-                "/pharmacy/getPharmacyById/*","/pharmacy/tokenPharmacy",
-                "/pharmacy/getRecipesByStatus/*",
-                "/pharmacy/viewRecipeHistory/*",
-                "/pharmacy/markRecipe/*");
+        filter.addUrlPatterns("/pharmacy/*");
 
 
         return filter;
