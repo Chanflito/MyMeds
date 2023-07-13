@@ -107,10 +107,10 @@ public class RecipeService {
 
     public boolean createRecipe(Integer doctorID, Integer recipeID) throws IOException, WriterException, MessagingException {
         Optional<Doctor> doctorFound=doctorRepository.findById(doctorID);
-        if (doctorFound.isPresent()){
-            Optional<Recipe> recipe = recipeRepository.findById(recipeID);
+        Optional<Recipe> recipe = recipeRepository.findById(recipeID);
+        if (doctorFound.isPresent() && recipe.isPresent()){
             Optional<Pharmacy> pharmacy = pharmacyRepository.findById(recipe.get().getPharmacyID());
-            if(!recipe.isPresent() || !pharmacy.isPresent()){return false;}
+            if(recipe.isEmpty() || !pharmacy.isPresent()){return false;}
             Recipe r = recipe.get();
             Pharmacy p = pharmacy.get();
             r.setPharmacy(pharmacy.get());

@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class EmailServiceImpl implements EmailService{
@@ -21,17 +24,24 @@ public class EmailServiceImpl implements EmailService{
    @Autowired
    private JavaMailSender javaMailSender;
 
-
+   private static MimeMessage cachedMimeMessage;
    @Override
    public String sendMail(File QR, String to, String body, Integer recipeID) throws MessagingException, IOException {
+       if (cachedMimeMessage==null){
+           cachedMimeMessage=javaMailSender.createMimeMessage();
+           MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(cachedMimeMessage,true);
+           mimeMessageHelper.setFrom(MyMail);
+       }
        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
        mimeMessageHelper.setFrom(MyMail);
        mimeMessageHelper.setTo(to);
-       mimeMessageHelper.setSubject("MyMed recipe");
+       mimeMessageHelper.setSubject("MyMeds recipe");
        mimeMessageHelper.setText(body);
-       mimeMessageHelper.addAttachment(String.valueOf(recipeID)+".jpg", QR);
-       javaMailSender.send(mimeMessage);
+       mimeMessageHelper.addAttachment(recipeID +".jpg", QR);
+       ExecutorService emailExecutor= Executors.newSingleThreadExecutor();
+       emailExecutor.execute(() -> javaMailSender.send(mimeMessage));
+       emailExecutor.shutdown();
        return "sent";
     }
 
