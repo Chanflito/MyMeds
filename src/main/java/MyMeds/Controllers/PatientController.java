@@ -3,11 +3,14 @@ package MyMeds.Controllers;
 import MyMeds.App.*;
 import MyMeds.Dto.CreateRecipeResponse;
 import MyMeds.Dto.InProcessRecipeData;
+import MyMeds.Dto.RecipePageDTO;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.DrugService;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -96,9 +99,15 @@ public class PatientController {
     }
 
     @GetMapping(path="/viewRecipes/{id}")
-    public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID, @RequestParam("status") RecipeStatus status){
-        List<RecipeService.recipeDTO> recipies= recipeService.findByRecipeStatusPatient(status, patientID);
-        return new ResponseEntity<>(recipies,HttpStatus.ACCEPTED);
+    public ResponseEntity<?> viewRecipes(@PathVariable("id") Integer patientID,
+                                         @RequestParam("status") RecipeStatus status,@RequestParam(value = "page", defaultValue = "0") int page,
+                                         @RequestParam(value = "size", defaultValue = "10") int size){
+        Pageable pageable= PageRequest.of(page, size);
+        List<RecipeService.recipeDTO> recipes= recipeService.findByRecipeStatusPatient(status, patientID,pageable);
+        int totalRecipes=recipeService.countRecipeByStatusPatient(status, patientID);
+        int totalPages = (int) Math.ceil((double) totalRecipes / size);
+        RecipePageDTO recipePageDTO=new RecipePageDTO(recipes,totalPages);
+        return new ResponseEntity<>(recipePageDTO, HttpStatus.OK);
     }
 
     @GetMapping(path="/getAllPharmacys")

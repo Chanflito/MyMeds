@@ -126,25 +126,17 @@ public class RecipeService {
     }
 
     //-------------------------BUSQUEDAS--------------------------------------------------------------------------------
-    public List<recipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID){
+    public List<recipeDTO> findByRecipeStatusPatient(RecipeStatus status, Integer patientID,Pageable pageable){
         //Ve todos los tipos de receta menos las Dispensed
-        List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID);
+        List<Recipe> recipes = recipeRepository.findByStatusAndID(status, patientID,pageable);
         List<recipeDTO> answer = new ArrayList<>();
-        boolean hasPharmacy = true;
-        if(status.equals(RecipeStatus.IN_PROGRESS) || status.equals(RecipeStatus.DECLINED)){hasPharmacy = true;}
-        //casos donde no tiene farmacia asignada
-        if(hasPharmacy) {
-            for (Recipe r : recipes) {
-                answer.add(constructRecipeDTO(r, r.getPharmacyID()));
-            }
-            return answer;
+        for (Recipe r : recipes) {
+            answer.add(constructRecipeDTO(r, r.getPharmacyID()));
         }
-        else{
-            for (Recipe r : recipes) {
-                answer.add(constructRecipeDTO(r, null));
-            }
-            return answer;
-        }
+        return answer;
+    }
+    public int countRecipeByStatusPatient(RecipeStatus status,Integer patientID){
+        return recipeRepository.totalRecipesForPatient(status, patientID);
     }
 
     //Status solo puede ser In_Progress
