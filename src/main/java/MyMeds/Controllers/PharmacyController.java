@@ -177,12 +177,8 @@ public class PharmacyController {
     }
     @GetMapping(path="/verifyByQr/{scanResult}")
     public ResponseEntity<?> verifyByQr(@PathVariable("scanResult") String scanResult){
-        System.out.println(Integer.valueOf(scanResult));
-        if(recipeService.Exists(Integer.valueOf(scanResult))){
-            return new ResponseEntity<>(true, HttpStatus.FOUND);
-        }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
-
+        RecipeService.recipeDTO result=recipeService.Exists(Integer.valueOf(scanResult));
+        return result!=null ? new ResponseEntity<>(result,HttpStatus.OK): new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping(path = "/loadMassiveStock/{pharmacyID}")

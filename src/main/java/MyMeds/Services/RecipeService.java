@@ -206,16 +206,12 @@ public class RecipeService {
         return answer;
     }
 
-    public boolean Exists(Integer recipeID){
+    public recipeDTO Exists(Integer recipeID){
         Optional<Recipe> r = recipeRepository.findById(recipeID);
-        if(r.isPresent()){
-            if(r.get().getStatus().equals(RecipeStatus.APPROVED)){
-                return true;
-            }
-            return false;
-
+        if(r.isPresent() && r.get().getStatus().equals(RecipeStatus.APPROVED)){
+            return constructRecipeDTO(r.get(),null);
         }
-        return false;
+        return null;
     }
 
     //--------------------------RECHAZAR--------------------------------------------------------------------------------
