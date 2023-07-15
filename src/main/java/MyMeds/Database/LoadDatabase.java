@@ -29,7 +29,7 @@ public class LoadDatabase {
 //
 //            Patient patient1 = new Patient(201, "laura_gonzales@gmail.com", "Laura Gonzales", "123");
 //            Patient patient2 = new Patient(202, "carlos_martinez@gmail.com", "Carlos Martinez", "123");
-//            Patient patient3 = new Patient(203, "ithelionpvp@gmail.com", "Ana Rodriguez", "123");
+//            Patient patient3 = new Patient(203, "anarodriguez@gmail.com", "Ana Rodriguez", "123");
 //            Patient patient4 = new Patient(204, "jorge_gomez@gmail.com", "Jorge Gomez", "123");
 //            Patient patient5 = new Patient(205, "isabel_lopez@gmail.com", "Isabel Lopez", "123");
 //

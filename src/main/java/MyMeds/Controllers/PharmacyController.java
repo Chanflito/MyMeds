@@ -38,14 +38,6 @@ public class PharmacyController {
         return new ResponseEntity<>(userService.getPharmacys(), HttpStatus.FOUND);
     }
 
-    @PostMapping("/savePharmacy")
-    public ResponseEntity<?> savePharmacy(@RequestBody Pharmacy pharmacy) {
-        if (this.userService.registerPharmacy(pharmacy) == null) {
-            throw new UserRegisteredException();
-        }
-        return new ResponseEntity<>(pharmacy, HttpStatus.CREATED);
-    }
-
     @GetMapping(path = "/getPharmacyById/{id}")
     public ResponseEntity<?> getPharmacyById(@PathVariable("id") Integer id) {
         return new ResponseEntity<>(this.userService.getPharmacyById(id), HttpStatus.FOUND);

@@ -37,13 +37,6 @@ public class DoctorController {
         return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
     }
 
-    @PostMapping("/saveDoctor")//Recibe una Request con un username, password etc y crea un nuevo doctor en la base de datos.
-    public ResponseEntity<?> saveDoctor(@RequestBody Doctor doctor) {
-        if (this.userService.registerDoctor(doctor)==null){
-            throw new UserRegisteredException();
-        }
-        return new ResponseEntity<>(doctor,HttpStatus.CREATED);
-    }
     @GetMapping(path = "/getDoctorById/{id}")
 //Busca los doctores en la base de datos mediante un ID y retorna el doctor en formato JSON con sus atributos.
     public ResponseEntity<?> getDoctorById(@PathVariable("id") Integer id) {

@@ -33,13 +33,6 @@ public class PatientController {
         return new ResponseEntity<>(userService.getPatients(), HttpStatus.FOUND);
     }
 
-    @PostMapping("/savePatient")
-    public ResponseEntity<?> savePatient(@RequestBody Patient patient){
-        if (this.userService.registerPatient(patient)==null){
-            throw new UserRegisteredException();
-        }
-        return new ResponseEntity<>(patient,HttpStatus.CREATED);
-    }
 
     @GetMapping(path="/getPatientById/{id}")
     public ResponseEntity<?> getPatientById(@PathVariable("id") Integer id){

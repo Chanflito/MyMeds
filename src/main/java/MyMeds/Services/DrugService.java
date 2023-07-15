@@ -279,7 +279,7 @@ public class DrugService {
                     stockPharmacyRepository.save(stockToChange);
                     pharmacyRepository.save(pharmacy.get());
                 }
-                if (drugInPharmacy==null && drugInMyMeds!=null){
+                else if (drugInPharmacy==null && drugInMyMeds!=null){
                     Optional<Drug> drug=drugRepository.findById(drugInMyMeds);
                     stockPharmacy.setStock(d.stock());
                     stockPharmacy.setDrug(drug.get());
@@ -287,7 +287,7 @@ public class DrugService {
                     pharmacyRepository.save(pharmacy.get());
                     stockPharmacyRepository.save(stockPharmacy);
                 }
-                if (drugInPharmacy==null){
+                else if (drugInPharmacy==null){
                     stockPharmacy.setStock(d.stock());
                     Drug drug=new Drug(d.brandName(), d.strength(), d.dosageForm());;
                     stockPharmacy.setDrug(drug);
