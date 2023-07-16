@@ -9,12 +9,16 @@ import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -32,6 +36,7 @@ public class DoctorController {
 
     @Autowired
     DrugService drugService;
+
     @GetMapping("/getDoctors")//Retorna todos los docotores que se encuentran en la base de datos en formato JSON
     public ResponseEntity<?> getDoctors() {
         return new ResponseEntity<>(userService.getDoctors(),HttpStatus.OK);
@@ -99,7 +104,7 @@ public class DoctorController {
     }
 
     @PutMapping(path = "/DeclineRecipe/{recipeID}")
-    public ResponseEntity<?> DeclineRecipe(@PathVariable("recipeID") Integer recipeID){
+    public ResponseEntity<?> DeclineRecipe(@PathVariable("recipeID") Integer recipeID) throws MessagingException {
         boolean done = recipeService.DeclineRecipe(recipeID);
         if(done){
             return new ResponseEntity<>(HttpStatus.OK);

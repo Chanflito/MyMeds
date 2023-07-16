@@ -8,9 +8,13 @@ import MyMeds.Repositorys.*;
 import MyMeds.email.EmailServiceImpl;
 import com.google.zxing.WriterException;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,6 +39,13 @@ public class RecipeService {
     EmailServiceImpl emailService;
     @Autowired
     DrugService drugService;
+
+    @Autowired
+    private JavaMailSender mailSender;
+    @Value("${spring.mail.username}")
+    private String MyMail;
+
+
     @Autowired
     StockPharmacyRepository stockPharmacyRepository;
 
@@ -207,12 +218,29 @@ public class RecipeService {
     }
 
     //--------------------------RECHAZAR--------------------------------------------------------------------------------
-    public boolean DeclineRecipe(Integer recipeID){
+    public boolean DeclineRecipe(Integer recipeID) throws MessagingException {
         Optional<Recipe> r = recipeRepository.findById(recipeID);
         if(!r.isPresent()){return false;}
         Recipe recipe = r.get();
         recipe.setStatus(RecipeStatus.DECLINED);
         recipeRepository.save(recipe);
+
+        //Send mail to patient
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom(MyMail);
+        mimeMessageHelper.setTo(recipe.getPatient().getMail());
+        mimeMessageHelper.setSubject("MyMeds Declined recipe");
+        String Body = "Su solicutud de receta con el id: " + recipeID + " para:";
+        List<Drug> drugs = recipe.getDrugs();
+        for(Drug d : drugs){
+            Body = Body + "\n\t - " + d.getBrandName();
+        }
+        Body = Body + "\n\n Fue Rechzada por " + recipe.getDoctor().getUsername() + " id: " + recipe.getDoctor().getPrimarykey() +
+                        ".\n\n Porfavor contactar su médico.";
+        mimeMessageHelper.setText(Body);
+        mailSender.send(mimeMessage);
+
         return true;
     }
     //-----------------------------------MAIL---------------------------------------------------------------------------
