@@ -46,5 +46,4 @@ public class EmailServiceImpl implements EmailService{
        emailExecutor.shutdown();
        return "sent";
     }
-
 }

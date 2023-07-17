@@ -25,7 +25,7 @@ public class LoadDatabase {
 //            Doctor doctor2 = new Doctor(102, "Maria Garcia", "123", "maria_garcia@gmail.com");
 //            Doctor doctor3 = new Doctor(103, "Juan Perez", "123", "juan_perez@gmail.com");
 //            Doctor doctor4 = new Doctor(104, "Ana Martinez", "123", "ana_martinez@gmail.com");
-//            Doctor doctor5 = new Doctor(105, "Luis Sanchez", "123", "luis_sanchez@gmail.com");
+//            Doctor doctor5 = new Doctor(105, "Bautista Maldonado", "123", "bautistamaldonado@gmail.com");
 //
 //            Patient patient1 = new Patient(201, "laura_gonzales@gmail.com", "Laura Gonzales", "123");
 //            Patient patient2 = new Patient(202, "carlos_martinez@gmail.com", "Carlos Martinez", "123");
@@ -37,7 +37,7 @@ public class LoadDatabase {
 //            Pharmacy pharmacy2 = new Pharmacy(302, "Farmacia San José", "123", "farmacia_san_jose@gmail.com");
 //            Pharmacy pharmacy3 = new Pharmacy(303, "Farmacia del Parque", "123", "farmacia_del_parque@gmail.com");
 //            Pharmacy pharmacy4 = new Pharmacy(304, "Farmacia Nuestra Señora", "123", "farmacia_nuestra_senora@gmail.com");
-//            Pharmacy pharmacy5 = new Pharmacy(305, "Farmacia Central", "123", "farmacia_central@gmail.com");
+//            Pharmacy pharmacy5 = new Pharmacy(305, "Farmacity", "123", "farmacity@gmail.com");
 //
 //
 //            doctorRepository.save(doctor1);
