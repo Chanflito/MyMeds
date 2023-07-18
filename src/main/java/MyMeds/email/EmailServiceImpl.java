@@ -35,7 +35,7 @@ public class EmailServiceImpl implements EmailService{
        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
        mimeMessageHelper.setFrom(MyMail);
        mimeMessageHelper.setTo(to);
-       mimeMessageHelper.setSubject("MyMeds recipe");
+       mimeMessageHelper.setSubject("MyMeds recipe "+ recipeID);
        mimeMessageHelper.setText(body);
        mimeMessageHelper.addAttachment(recipeID +".jpg", QR);
        ExecutorService emailExecutor= Executors.newSingleThreadExecutor();

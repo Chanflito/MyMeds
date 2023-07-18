@@ -25,13 +25,13 @@ public class LoadDatabase {
 //            Doctor doctor2 = new Doctor(102, "Maria Garcia", "123", "maria_garcia@gmail.com");
 //            Doctor doctor3 = new Doctor(103, "Juan Perez", "123", "juan_perez@gmail.com");
 //            Doctor doctor4 = new Doctor(104, "Ana Martinez", "123", "ana_martinez@gmail.com");
-//            Doctor doctor5 = new Doctor(105, "Bautista Maldonado", "123", "bautistamaldonado@gmail.com");
+//            Doctor doctor5 = new Doctor(140124, "Bautista Maldonado", "123", "bautistamaldonado@gmail.com");
 //
-//            Patient patient1 = new Patient(201, "laura_gonzales@gmail.com", "Laura Gonzales", "123");
-//            Patient patient2 = new Patient(202, "carlos_martinez@gmail.com", "Carlos Martinez", "123");
-//            Patient patient3 = new Patient(203, "anarodriguez@gmail.com", "Ana Rodriguez", "123");
-//            Patient patient4 = new Patient(204, "jorge_gomez@gmail.com", "Jorge Gomez", "123");
-//            Patient patient5 = new Patient(205, "isabel_lopez@gmail.com", "Isabel Lopez", "123");
+//            Patient patient1 = new Patient(427861, "laura_gonzales@gmail.com", "Laura Gonzales", "123");
+//            Patient patient2 = new Patient(433121, "carlos_martinez@gmail.com", "Carlos Martinez", "123");
+//            Patient patient3 = new Patient(230124, "ana_rodriguez@gmail.com", "Ana Rodriguez", "123");
+//            Patient patient4 = new Patient(214112, "jorge_gomez@gmail.com", "Jorge Gomez", "123");
+//            Patient patient5 = new Patient(212311, "isabel_lopez@gmail.com", "Isabel Lopez", "123");
 //
 //            Pharmacy pharmacy1 = new Pharmacy(301, "Farmacia Los Pinos", "123", "farmacia_los_pinos@gmail.com");
 //            Pharmacy pharmacy2 = new Pharmacy(302, "Farmacia San José", "123", "farmacia_san_jose@gmail.com");

@@ -232,7 +232,7 @@ public class RecipeService {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
         mimeMessageHelper.setFrom(MyMail);
         mimeMessageHelper.setTo(recipe.getPatient().getMail());
-        mimeMessageHelper.setSubject("MyMeds Declined recipe");
+        mimeMessageHelper.setSubject("MyMeds Declined recipe "+recipeID);
         String Body = "Su solicutud de receta con el id: " + recipeID + " para:";
         List<Drug> drugs = recipe.getDrugs();
         for(Drug d : drugs){
