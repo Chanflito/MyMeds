@@ -6,11 +6,14 @@ import MyMeds.Dto.ApprovedRecipeData;
 import MyMeds.Exceptions.UserRegisteredException;
 import MyMeds.Services.RecipeService;
 import MyMeds.Services.UserService;
+import com.google.zxing.WriterException;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +84,7 @@ public class DoctorController {
     }
 
     @PutMapping(path = "/AproveRecipe/{id}")
-    public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestBody ApprovedRecipeData requested){
+    public ResponseEntity<?>AproveAndSendRecipe(@PathVariable("id") Integer doctorID,@RequestBody ApprovedRecipeData requested) throws IOException, WriterException, MessagingException {
         boolean response = recipeService.createRecipe(doctorID, requested);
         if (response){
             return new ResponseEntity<>(HttpStatus.OK);
